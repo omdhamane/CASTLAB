@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shop | CASTLAB</title>
+
+  <!-- Core Design System -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>CASTLAB</h1>
+  </header>
+
+  <!-- SHOP CONTENT -->
+  <main style="padding:64px;">
+    <section class="surface" style="padding:32px;">
+      <div id="products" class="product-grid"></div>
+    </section>
+  </main>
+
+  <!-- SCRIPT -->
+  <script>
+  fetch("http://localhost:5000/api/products?scale=1:64")
+    .then(res => res.json())
+    .then(products => {
+      console.log("Products:", products);
+
+      const container = document.getElementById("products");
+      if (!container) {
+        console.error("Products container not found");
+        return;
+      }
+
+      products.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        card.innerHTML = `
+            <div class="product-image">
+            <img src="${p.image}" alt="${p.name}">
+            </div>
+
+              <h3>${p.name}</h3>
+              <p>${p.brand} · ${p.scale}</p>
+              <p style="margin-top:8px;">₹${p.price}</p>
+              `;
+
+
+        card.onclick = () => {
+          window.location.href = `product.html?id=${p._id}`;
+        };
+
+        container.appendChild(card);
+      });
+    })
+    .catch(err => console.error("Fetch error:", err));
+</script>
+
+</body>
+</html>
