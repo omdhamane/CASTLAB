@@ -1,31 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CASTLAB | The Digital Showroom</title>
 
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
 </head>
+
 <body>
-  <div class="product-card">
-  <div class="product-image">
-    <img src="./assets/images/htw.avif" alt="Diecast Car">
+
+<!-- ================= HEADER ================= -->
+
+<header class="top-nav">
+  <div class="logo">CASTLAB</div>
+
+  <input
+    type="search"
+    class="nav-search"
+    placeholder="Search models, brands, castings..."
+  />
+
+  <div class="nav-icons">
+    <a href="wishlist.html" title="Wishlist">♡</a>
+    <a href="cart.html" title="Cart">🛒</a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+  <video
+    class="hero-video"
+    autoplay
+    muted
+    playsinline
+    poster="./assets/images/login-bg.jpg"
+  >
+    <source  src="./assets/videos/intro.mp4" type="video/mp4">
+  </video>
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <h1>Curated Excellence for Every Collector.</h1>
+
+    <p>
+      From rare finds to mainline classics, discover the world of premium die-cast.
+    </p>
+
+    <a href="shop.html" class="btn solid">
+      Shop Latest Arrivals
+    </a>
   </div>
 
-  <div class="product-info">
-    <h3 class="product-name">Porsche 911 GT3</h3>
-    <p class="product-meta">1:64 · Hot Wheels</p>
+</section>
 
-    <div class="product-footer">
-      <span class="product-price">₹499</span>
-      <button class="add-to-cart">Add to Cart</button>
+<!-- ================= TRUST BAR ================= -->
+
+<section class="trust-bar">
+  <div class="trust-item">🚚 Insured Shipping</div>
+  <div class="trust-item">✔ Guaranteed Mint Condition</div>
+  <div class="trust-item">🧪 Collector-Owned</div>
+</section>
+
+<!-- ================= GARAGE CATEGORIES ================= -->
+
+<section class="garage">
+
+  <h2>The Garage</h2>
+
+  <div class="garage-grid">
+    <a href="shop.html?category=premium" class="garage-tile premium">
+      Premium Series
+    </a>
+
+    <a href="shop.html?category=mainline" class="garage-tile mainline">
+      The Mainline Wall
+    </a>
+
+    <a href="shop.html?category=preorder" class="garage-tile preorder">
+      New Pre-Orders
+    </a>
+
+    <a href="shop.html?category=accessories" class="garage-tile accessories">
+      Protectors & Displays
+    </a>
+  </div>
+
+</section>
+
+<!-- ================= FEATURED COLLECTION ================= -->
+
+<section class="pedestal">
+
+  <h2>On the Pedestal</h2>
+
+  <div class="pedestal-row">
+
+    <div class="pedestal-card">
+      <img src="assets/images/featured1.png" alt="Featured Car">
+      <div class="pedestal-hover">
+        <span class="price">₹1,299</span>
+        <button class="btn outline">Quick Add</button>
+      </div>
     </div>
-  </div>
-</div>
-</body>
-</html>
 
+    <div class="pedestal-card">
+      <img src="assets/images/featured2.png" alt="Featured Car">
+      <div class="pedestal-hover">
+        <span class="price">₹1,499</span>
+        <button class="btn outline">Quick Add</button>
+      </div>
+    </div>
+
+    <div class="pedestal-card">
+      <img src="assets/images/featured3.png" alt="Featured Car">
+      <div class="pedestal-hover">
+        <span class="price">₹999</span>
+        <button class="btn outline">Quick Add</button>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= THE LAB JOURNAL ================= -->
+
+<section class="lab">
+
+  <h2>Inside The Lab</h2>
+
+  <div class="lab-grid">
+
+    <article class="lab-card">
+      <h3>How to Spot a Treasure Hunt</h3>
+      <p>Key signs every collector should know before buying.</p>
+    </article>
+
+    <article class="lab-card">
+      <h3>Top 5 Releases This Month</h3>
+      <p>Our handpicked highlights from current drops.</p>
+    </article>
+
+    <article class="lab-card">
+      <h3>Protective Grading 101</h3>
+      <p>Keeping your collection mint for years.</p>
+    </article>
+
+  </div>
+
+</section>
+
+<!-- ================= CTA ================= -->
+
+<section class="home-cta">
+  <h2>Join the Lab</h2>
+  <p>Be the first to access new drops, pre-orders, and collector insights.</p>
+
+  <form class="newsletter">
+    <input type="email" placeholder="Enter your email">
+    <button class="btn solid">Subscribe</button>
+  </form>
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+  <p>© 2026 CASTLAB. All Rights Reserved.</p>
+</footer>
+
+</body>
+ </html>

@@ -143,3 +143,68 @@ header a:hover {
 body {
   background: transparent;
  }
+
+ /* =====================================================
+   HOME PAGE NAVBAR (DIGITAL SHOWROOM)
+   SAFE ADDITION – DOES NOT TOUCH EXISTING NAV
+   ===================================================== */
+
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 2rem;
+
+  padding: 1.2rem 4rem;
+
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* LOGO (REUSES CASTLAB BRAND FEEL WITHOUT CONFLICT) */
+.top-nav .logo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #ffffff;
+  font-family: "Inter", "Poppins", system-ui, sans-serif;
+}
+
+/* SEARCH BAR */
+.top-nav .nav-search {
+  max-width: 520px;
+  width: 100%;
+  justify-self: center;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.65rem 1rem;
+
+  color: #ffffff;
+  outline: none;
+}
+
+.top-nav .nav-search::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ICONS */
+.top-nav .nav-icons a {
+  margin-left: 1.6rem;
+  text-decoration: none;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.top-nav .nav-icons a:hover {
+  color: #ffffff;
+}

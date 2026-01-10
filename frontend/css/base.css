@@ -25,6 +25,10 @@
   --text-lg: 20px;
   --text-md: 16px;
   --text-sm: 13px;
+
+  --black: #0b0b0b;
+  --white: #ffffff;
+  --chrome: #bfc3c7;
 }
 
 * {
