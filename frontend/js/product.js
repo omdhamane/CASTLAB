@@ -73,3 +73,13 @@ async function loadProduct() {
 }
 
 loadProduct();
+
+/* ---------- WISHLIST BUTTON ---------- */
+document.getElementById("wishlistBtn").addEventListener("click", () => {
+  addToWishlist({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.image
+  });
+});

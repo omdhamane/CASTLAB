@@ -468,4 +468,43 @@ body {
     justify-content: flex-start;
   }
 }
+/* ================= WISHLIST PAGE ================= */
+
+.wishlist-page {
+  padding: 3rem;
+}
+
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.wishlist-card {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.wishlist-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+}
+
+.wishlist-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.wishlist-actions button {
+  flex: 1;
+}
+.wishlist-page h2 {
+  margin-bottom: 2.5rem;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
 

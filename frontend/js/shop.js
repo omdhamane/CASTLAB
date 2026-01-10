@@ -30,13 +30,11 @@ async function loadProducts(scale = "1:64") {
     card.className = "product-card";
     card.dataset.id = product._id;
 
-    // ✅ FIX: decide image FIRST
     const imageSrc =
       product.images && product.images.length
         ? product.images[0]
         : product.image || "";
 
-    // ✅ HTML ONLY inside template string
     card.innerHTML = `
       <button class="like-btn">♡</button>
 
@@ -54,13 +52,14 @@ async function loadProducts(scale = "1:64") {
         </div>
       </div>
     `;
- 
+
     grid.appendChild(card);
   });
+
+  markWishlistItems();
 }
 
-
-/* ---------- CART (CORRECT FORMAT) ---------- */
+/* ---------- CART ---------- */
 
 function addToCart(productId) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -77,6 +76,47 @@ function addToCart(productId) {
   console.log("🛒 Cart updated:", cart);
 }
 
+/* ---------- WISHLIST ---------- */
+
+function getWishlist() {
+  return JSON.parse(localStorage.getItem("wishlist")) || [];
+}
+
+function saveWishlist(wishlist) {
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+}
+
+function addToWishlist(product) {
+  let wishlist = getWishlist();
+
+  const exists = wishlist.some(item => item.id === product.id);
+  if (exists) return;
+
+  wishlist.push(product);
+  saveWishlist(wishlist);
+  console.log("❤️ Wishlist updated:", wishlist);
+}
+
+function removeFromWishlist(id) {
+  let wishlist = getWishlist().filter(item => item.id !== id);
+  saveWishlist(wishlist);
+}
+
+function markWishlistItems() {
+  const wishlist = getWishlist();
+
+  wishlist.forEach(item => {
+    const card = document.querySelector(
+      `.product-card[data-id="${item.id}"]`
+    );
+    if (!card) return;
+
+    const btn = card.querySelector(".like-btn");
+    btn.classList.add("active");
+    btn.textContent = "♥";
+  });
+}
+
 /* ---------- EVENTS ---------- */
 
 grid.addEventListener("click", e => {
@@ -85,24 +125,32 @@ grid.addEventListener("click", e => {
 
   const productId = card.dataset.id;
 
-  // LIKE
+  // ❤️ LIKE / WISHLIST
   if (e.target.classList.contains("like-btn")) {
-    e.target.classList.toggle("active");
-    e.target.textContent =
-      e.target.classList.contains("active") ? "♥" : "♡";
+    const btn = e.target;
+    const active = btn.classList.toggle("active");
+    btn.textContent = active ? "♥" : "♡";
+
+    const product = {
+      id: productId,
+      name: card.querySelector("h3").innerText,
+      price: card.querySelector(".price").innerText.replace("₹", ""),
+      image: card.querySelector("img").src
+    };
+
+    active ? addToWishlist(product) : removeFromWishlist(productId);
     return;
   }
 
-  // ADD TO CART
+  // 🛒 ADD TO CART
   if (e.target.classList.contains("add-btn")) {
     addToCart(productId);
     return;
   }
 
-  // OPEN PRODUCT PAGE (default click)
+  // 🔍 OPEN PRODUCT PAGE
   window.location.href = `product.html?id=${productId}`;
 });
-
 
 /* ---------- FILTERS ---------- */
 
