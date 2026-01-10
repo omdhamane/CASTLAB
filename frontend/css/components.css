@@ -199,3 +199,8 @@ input:focus {
 .glass-card a:hover {
   text-decoration: underline;
 }
+
+.register-page .glass-card {
+  max-width: 420px;
+  padding: 28px;
+}
