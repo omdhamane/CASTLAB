@@ -54,3 +54,7 @@ header a:hover {
 .product-card {
   max-width: 100%;
 }
+
+body {
+  background: transparent;
+}

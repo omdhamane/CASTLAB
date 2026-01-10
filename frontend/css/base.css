@@ -33,9 +33,28 @@
   padding: 0;
 }
 
-body {
-  background: var(--bg-main);
-  color: var(--text-primary);
-  font-family: Inter, system-ui, Arial, sans-serif;
-  font-size: var(--text-md);
+/* ===== Login Page Background ===== */
+
+.login-page {
+  min-height: 100vh;
+  margin: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15)
+    ),
+    url("../assets/images/login-bg.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  font-family: 'Inter', sans-serif;
 }
+
+
+
+
+
+
