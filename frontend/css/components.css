@@ -199,7 +199,7 @@ input:focus {
 }
 
 .glass-card a {
-  color: #93c5fd;
+  color: hsl(212, 93%, 11%);
   text-decoration: none;
 }
 

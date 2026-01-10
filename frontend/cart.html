@@ -3,27 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <title>Cart | CASTLAB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Shared styles -->
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/styles.css">
-
+  <link rel="stylesheet" href="css/pages.css" />
 </head>
 <body>
 
-  <header style="padding:24px;">
-    <h1><a href="shop.html" style="color:inherit;text-decoration:none;">CASTLAB</a></h1>
+  <!-- ========== NAVBAR (SAME EVERYWHERE) ========== -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="index.html" class="logo-link">
+        <span class="castlab-logo">CASTLAB</span>
+      </a>
+    </div>
+
+    <nav class="nav-right">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="wishlist.html">Wishlist</a>
+      <a href="cart.html" class="active">Cart</a>
+      <a href="login.html">Login</a>
+    </nav>
   </header>
 
-  <main style="padding:64px;">
+  <!-- ========== CART PAGE ========== -->
+  <main class="cart-container">
     <h2>Your Cart</h2>
 
     <div id="cartItems"></div>
 
-    <h3>Total: ₹<span id="cartTotal">0</span></h3>
-
-    <button id="checkoutBtn">Proceed to Checkout</button>
-
+    <div class="cart-summary">
+      <strong>Total: ₹<span id="cartTotal">0</span></strong><br />
+      <button id="checkoutBtn" class="checkout-btn">
+        Proceed to Checkout
+      </button>
+    </div>
   </main>
 
   <script src="js/cart.js"></script>

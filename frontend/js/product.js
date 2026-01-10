@@ -2,22 +2,24 @@ const API_BASE = "http://127.0.0.1:5000";
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
-
 const container = document.getElementById("productDetail");
 
 async function loadProduct() {
   const res = await fetch(`${API_BASE}/api/products/${productId}`);
   const product = await res.json();
 
-  const images = product.images && product.images.length
-    ? product.images
-    : [product.image]; // fallback for old data
+  // ✅ SUPPORT MULTIPLE IMAGES (with fallback)
+  const images =
+    product.images && product.images.length
+      ? product.images
+      : product.image
+      ? [product.image]
+      : [];
 
   container.innerHTML = `
     <div class="product-detail">
       <div class="product-detail-image">
-        <img id="mainImage" src="${images[0]}" alt="${product.name}">
-
+        <img id="mainImage" src="${images[0] || ""}" alt="${product.name}" />
         <div class="thumbnail-row" id="thumbnails"></div>
       </div>
 
@@ -37,45 +39,37 @@ async function loadProduct() {
     </div>
   `;
 
-  // Render thumbnails
-  const thumbsContainer = document.getElementById("thumbnails");
+  /* ---------- THUMBNAILS ---------- */
+  const thumbContainer = document.getElementById("thumbnails");
   const mainImage = document.getElementById("mainImage");
 
   images.forEach((img, index) => {
-    const thumb = document.createElement("img");
-    thumb.src = img;
-    thumb.className = "thumbnail";
-    if (index === 0) thumb.classList.add("active");
+    const t = document.createElement("img");
+    t.src = img;
+    t.className = "thumbnail";
+    if (index === 0) t.classList.add("active");
 
-    thumb.addEventListener("click", () => {
+    t.onclick = () => {
       mainImage.src = img;
       document
         .querySelectorAll(".thumbnail")
-        .forEach(t => t.classList.remove("active"));
-      thumb.classList.add("active");
-    });
+        .forEach(el => el.classList.remove("active"));
+      t.classList.add("active");
+    };
 
-    thumbsContainer.appendChild(thumb);
+    thumbContainer.appendChild(t);
   });
 
-  // Add to cart
-  document.getElementById("addToCartBtn").addEventListener("click", () => {
-    addToCart(product._id);
-  });
-}
+  /* ---------- ADD TO CART ---------- */
+  document.getElementById("addToCartBtn").onclick = () => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existing = cart.find(i => i.productId === product._id);
 
-function addToCart(productId) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const item = cart.find(i => i.productId === productId);
+    if (existing) existing.quantity += 1;
+    else cart.push({ productId: product._id, quantity: 1 });
 
-  if (item) {
-    item.quantity += 1;
-  } else {
-    cart.push({ productId, quantity: 1 });
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Added to cart");
+    localStorage.setItem("cart", JSON.stringify(cart));
+  };
 }
 
 loadProduct();
