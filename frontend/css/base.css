@@ -77,6 +77,22 @@
   font-family: 'Inter', sans-serif;
 }
 
+.glass {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+}
+
+body {
+  background:
+    radial-gradient(circle at 20% 30%, rgba(120, 140, 255, 0.15), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255, 100, 140, 0.12), transparent 45%),
+    linear-gradient(135deg, #06070a, #0b0d14);
+  color: #fff;
+}
+
+
 
 
 

@@ -3,26 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <title>Product | CASTLAB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Base styles -->
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/styles.css">
-
+  <link rel="stylesheet" href="css/pages.css" />
 </head>
+
 <body>
 
-  <header style="padding: 24px;">
-    <h1><a href="shop.html" style="color:inherit;text-decoration:none;">CASTLAB</a></h1>
-    <a href="cart.html">Cart</a>
+  <!-- ================= NAVBAR ================= -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="index.html" class="logo-link">
+        <span class="castlab-logo">CASTLAB</span>
+      </a>
+    </div>
+
+    <nav class="nav-right">
+      <a href="index.html">Home</a>
+      <a href="shop.html" class="active">Shop</a>
+      <a href="wishlist.html">Wishlist</a>
+      <a href="cart.html">Cart</a>
+      <a href="login.html">Login</a>
+    </nav>
   </header>
 
-  <main id="productDetail" style="padding: 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px;">
+  <!-- ================= PRODUCT PAGE ================= -->
+  <main class="product-page">
+
+    <!-- JS will inject product content here -->
+    <div class="product-detail-card" id="productDetail">
+      <!-- 
+        Expected structure injected by JS:
+
+        <div class="product-detail">
+          <div class="product-detail-image">
+            <img id="mainImage" />
+            <div class="thumbnail-row" id="thumbnails"></div>
+          </div>
+
+          <div class="product-detail-info">
+            ...
+          </div>
+        </div>
+      -->
+    </div>
+
   </main>
 
-  <main id="productDetail" class="product-detail"></main>
-
-
-  <script src="js/cart.js"></script>
+  <!-- ================= SCRIPT ================= -->
   <script src="js/product.js"></script>
 
 </body>

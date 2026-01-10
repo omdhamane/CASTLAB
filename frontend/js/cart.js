@@ -1,3 +1,7 @@
+const API_BASE = "http://127.0.0.1:5000";
+
+/* ---------- CART HELPERS ---------- */
+
 function getCart() {
   return JSON.parse(localStorage.getItem("cart")) || [];
 }
@@ -6,21 +10,7 @@ function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-function addToCart(productId) {
-  let cart = getCart();
-  const item = cart.find(i => i.productId === productId);
-
-  if (item) {
-    item.quantity += 1;
-  } else {
-    cart.push({ productId, quantity: 1 });
-  }
-
-  saveCart(cart);
-  alert("Added to cart");
-}
-
-/* ---------- CART PAGE ---------- */
+/* ---------- LOAD CART ---------- */
 
 async function loadCart() {
   const cart = getCart();
@@ -32,48 +22,53 @@ async function loadCart() {
   container.innerHTML = "";
   let total = 0;
 
-  for (let item of cart) {
-    const res = await fetch(`http://localhost:5000/api/products/${item.productId}`);
+  if (cart.length === 0) {
+    container.innerHTML = "<p>Your cart is empty</p>";
+    totalEl.textContent = "0";
+    return;
+  }
+
+  for (const item of cart) {
+    const res = await fetch(`${API_BASE}/api/products/${item.productId}`);
     const product = await res.json();
 
     total += product.price * item.quantity;
 
     const div = document.createElement("div");
-    div.style.background = "var(--bg-surface)";
-    div.style.padding = "16px";
-    div.style.marginBottom = "12px";
-    div.style.display = "grid";
-    div.style.gridTemplateColumns = "1fr 100px 40px";
-    div.style.gap = "16px";
+    div.className = "cart-item";
 
     div.innerHTML = `
-      <div>
+      <div class="cart-info">
         <h4>${product.name}</h4>
         <p>${product.scale} · ${product.brand}</p>
-        <p>₹${product.price}</p>
+        <p class="price">₹${product.price}</p>
       </div>
 
-      <div>
+      <div class="cart-qty">
         <button onclick="updateQty('${item.productId}', -1)">−</button>
         <span>${item.quantity}</span>
         <button onclick="updateQty('${item.productId}', 1)">+</button>
       </div>
 
-      <span onclick="removeItem('${item.productId}')" style="cursor:pointer;">✕</span>
+      <button class="remove-btn" onclick="removeItem('${item.productId}')">✕</button>
     `;
 
     container.appendChild(div);
   }
 
-  totalEl.innerText = total;
+  totalEl.textContent = total;
 }
+
+/* ---------- UPDATE QTY ---------- */
 
 function updateQty(productId, change) {
   let cart = getCart();
   const item = cart.find(i => i.productId === productId);
+
   if (!item) return;
 
   item.quantity += change;
+
   if (item.quantity <= 0) {
     cart = cart.filter(i => i.productId !== productId);
   }
@@ -88,7 +83,7 @@ function removeItem(productId) {
   loadCart();
 }
 
-document.addEventListener("DOMContentLoaded", loadCart);
+/* ---------- CHECKOUT ---------- */
 
 async function checkout() {
   const token = localStorage.getItem("token");
@@ -101,7 +96,7 @@ async function checkout() {
 
   const cart = getCart();
 
-  const res = await fetch("http://localhost:5000/api/orders", {
+  const res = await fetch(`${API_BASE}/api/orders`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -116,9 +111,11 @@ async function checkout() {
     localStorage.removeItem("cart");
     window.location.href = `invoice.html?file=${data.invoice}`;
   } else {
-    alert(data.message);
+    alert(data.message || "Checkout failed");
   }
 }
+
+document.addEventListener("DOMContentLoaded", loadCart);
 
 document
   .getElementById("checkoutBtn")
