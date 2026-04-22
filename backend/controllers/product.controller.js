@@ -39,3 +39,35 @@ exports.createProduct = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+exports.searchProducts = async (req, res) => {
+  try {
+    const query = req.query.q;
+
+    if (!query) {
+      return res.json({
+        count: 0,
+        products: []
+      });
+    }
+
+    const keyword = query.toLowerCase();
+
+    // MongoDB search (LIKE Amazon style)
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: keyword, $options: "i" } },
+        { brand: { $regex: keyword, $options: "i" } },
+        { scale: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } }
+      ]
+    });
+
+    res.json({
+      count: products.length,
+      products
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Search failed" });
+  }
+};

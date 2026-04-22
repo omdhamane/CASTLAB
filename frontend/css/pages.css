@@ -172,29 +172,58 @@ body {
 
 /* ================= LIKE BUTTON ================= */
 
+/* ================= LIKE / WISHLIST BUTTON ================= */
+
+.product-image {
+  position: relative;
+}
+
 .like-btn {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: #bbb;
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease;
-  }
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 36px;
+  height: 36px;
+
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(10px);
+
+  color: #fff;
+  font-size: 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.85);
+
+  transition: 
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+/* show only on hover */
+.product-card:hover .like-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.like-btn:hover {
+  background: rgba(255,77,77,0.9);
+}
 
 .like-btn.active {
-  background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
-  color: #fff;
+   background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
   border: none;
 }
+
 
 /* ================= FILTERS ================= */
 
@@ -551,12 +580,7 @@ body {
   opacity: 0.85;
 }
 
-/* =====================================================
-   HOME PAGE – DIGITAL SHOWROOM (ADDITIONS)
-   SAFE APPEND – NO EXISTING CODE TOUCHED
-   ===================================================== */
-
-/* ================= TRUST BAR ================= */
+/* ---------- trust bar ---------- */
 
 .trust-bar {
   display: flex;
@@ -625,28 +649,28 @@ body {
 }
 
 /* example backgrounds – replace images anytime */
-.garage-tile.premium {
+.garage-tile.scale-1-64 {
   background-image:
     linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
-    url("../assets/images/premium.jpg");
+    url("../assets/images/1.64_home_\ poster.png");
+ }
+
+.garage-tile.scale-1-43 {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
+    url("../assets/images/1.43_home_\ poster.png");
 }
 
-.garage-tile.mainline {
+.garage-tile.scale-1-18 {
   background-image:
     linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
-    url("../assets/images/mainline.jpg");
-}
-
-.garage-tile.preorder {
-  background-image:
-    linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
-    url("../assets/images/preorder.jpg");
+    url("../assets/images/1.18_home_\ poster.png");
 }
 
 .garage-tile.accessories {
   background-image:
     linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
-    url("../assets/images/accessories.jpg");
+    url("../assets/images/protector_post.png");
 }
 
 /* ================= PEDESTAL (FEATURED COLLECTION) ================= */
@@ -741,3 +765,233 @@ body {
   opacity: 0.8;
 }
 
+/* ================= SEARCH SUGGESTIONS ================= */
+
+.search-suggestions {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+  display: none;
+  z-index: 1000;
+}
+
+.search-suggestions div {
+  padding: 12px 16px;
+  cursor: pointer;
+  color: #eee;
+  border-bottom: 1px solid #222;
+}
+
+.search-suggestions div:hover {
+  background: #1a1a1a;
+}
+
+.search-suggestions div:last-child {
+  border-bottom: none;
+}
+
+/* =========================================================
+   PRODUCT DESCRIPTION SCROLL FIX (SAFE OVERRIDE)
+   ========================================================= */
+
+/* Allow inner sections to manage their own scrolling */
+.product-detail {
+  overflow: visible; /* ✅ override hidden */
+}
+
+/* Make description scrollable */
+.product-detail-info .description {
+  max-height: 180px;      /* adjust height if needed */
+  overflow-y: auto;       /* ✅ ENABLE SCROLL */
+  padding-right: 10px;
+  line-height: 1.6;
+}
+
+/* Smooth premium scrollbar */
+.product-detail-info .description::-webkit-scrollbar {
+  width: 6px;
+}
+
+.product-detail-info .description::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+}
+
+.product-detail-info .description::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Firefox support */
+.product-detail-info .description {
+  scrollbar-width: thin;
+}
+
+/* =========================================================
+   FINAL PRODUCT DESCRIPTION SCROLL FIX (HARD OVERRIDE)
+   ========================================================= */
+
+/* 1️⃣ Allow scrolling inside product page ONLY */
+.product-page {
+  overflow: visible !important;
+}
+
+/* 2️⃣ Override hidden overflow that blocks wheel events */
+.product-detail {
+  overflow: visible !important;
+}
+
+/* 3️⃣ Make info column able to host scrollable content */
+.product-detail-info {
+  overflow: visible !important;
+}
+
+/* 4️⃣ FORCE description to be scrollable */
+.product-detail-info .description {
+  max-height: 180px;          /* visible height */
+  overflow-y: auto !important;
+  padding-right: 10px;
+  line-height: 1.6;
+  pointer-events: auto;
+}
+
+/* 5️⃣ Ensure mouse wheel is captured */
+.product-detail-info .description * {
+  pointer-events: auto;
+}
+
+/* 6️⃣ Scrollbar styling (optional but safe) */
+.product-detail-info .description::-webkit-scrollbar {
+  width: 6px;
+}
+
+.product-detail-info .description::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+}
+
+.product-detail-info .description::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.product-detail-info .description {
+  scrollbar-width: thin;
+}
+
+/* =========================================================
+   PRODUCT PAGE GLOBAL SCROLL FIX (CRITICAL)
+   ========================================================= */
+
+/* Allow page-level scrolling ONLY on product page */
+body {
+  overflow-y: auto;
+}
+
+/* Ensure product page can scroll vertically */
+.product-page {
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Allow content inside card to extend vertically */
+.product-detail {
+  overflow: visible !important;
+}
+
+/* Image column must not lock height */
+.product-detail-image {
+  overflow: visible !important;
+}
+
+/* Info column must not lock scroll */
+.product-detail-info {
+  overflow: visible !important;
+}
+
+/* =========================================================
+   PRODUCT PAGE – WISHLIST BUTTON (PREMIUM FIX)
+   ========================================================= */
+
+#wishlistBtn {
+  margin-top: 1.8rem;
+  padding: 14px 22px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Hover */
+#wishlistBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+/* Active (added to wishlist) */
+#wishlistBtn.active {
+  background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
+  border: none;
+}
+
+/* Heart animation */
+#wishlistBtn::before {
+  content: "♡";
+  font-size: 1.2rem;
+  transition: transform 0.25s ease;
+}
+
+#wishlistBtn.active::before {
+  content: "♥";
+}
+
+#wishlistBtn:hover::before {
+  transform: scale(1.15);
+}
+
+.product-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.wishlist-btn {
+  padding: 0.9rem 1.4rem;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.wishlist-btn:hover {
+  background: rgba(255,77,77,0.9);
+  border-color: transparent;
+}
+
+.add-to-cart-btn {
+  flex: 1;
+}

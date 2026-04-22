@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
+// import controllers
 const {
   getProducts,
   getProductById,
-  createProduct
+  createProduct,
+  searchProducts
 } = require("../controllers/product.controller");
+
+// 🔍 SEARCH ROUTE (IMPORTANT: keep this ABOVE :id)
+router.get("/search", searchProducts);
 
 // Public routes
 router.get("/", getProducts);
