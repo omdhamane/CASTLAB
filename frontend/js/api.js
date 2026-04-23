@@ -1,4 +1,4 @@
-fetch("http://localhost:5000/")
+fetch("https://castlab-i3hm.onrender.com")
   .then(res => res.text())
   .then(data => console.log(data));
 
