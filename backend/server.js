@@ -11,9 +11,7 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors({
-  origin: "*"
-}));
+app.use(cors());
 app.use(express.json());
 
 // Health check
@@ -21,22 +19,20 @@ app.get("/", (req, res) => {
   res.send("CASTLAB API running");
 });
 
-// Static files
 app.use("/invoices", express.static(path.join(__dirname, "invoices")));
-
-// Routes
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/products", require("./routes/product.routes"));
 app.use("/api/orders", require("./routes/order.routes"));
 
-// Start server
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-<<<<<<< HEAD
 });
 
+const cors = require("cors");
 
-=======
-});
->>>>>>> e2fec922b7c72bba60bd7eee935403096e021daf
+app.use(cors({
+  origin: "*"
+}));
+
