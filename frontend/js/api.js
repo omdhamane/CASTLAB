@@ -1,8 +1,8 @@
-fetch("http://localhost:5000/")
+fetch("https://castlab-i3hm.onrender.com/api/products")
   .then(res => res.text())
   .then(data => console.log(data));
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://castlab-i3hm.onrender.com/api";
 
 async function fetchProducts(scale = "") {
   const url = scale
