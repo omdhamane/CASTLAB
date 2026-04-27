@@ -1,7 +1,8 @@
+require("dotenv").config(); // ← MUST BE FIRST LINE
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-require("dotenv").config();
 
 const connectDB = require("./config/db");
 
@@ -11,28 +12,46 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Health check
 app.get("/", (req, res) => {
-  res.send("CASTLAB API running");
+  res.json({ 
+    message: "CASTLAB API running ✅",
+    version: "1.0.0"
+  });
 });
 
+// Static files for invoices
 app.use("/invoices", express.static(path.join(__dirname, "invoices")));
+
+// Routes
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/products", require("./routes/product.routes"));
 app.use("/api/orders", require("./routes/order.routes"));
 
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({ message: `Route ${req.originalUrl} not found` });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error("❌ Error:", err.stack);
+  res.status(500).json({
+    message: "Internal server error",
+    error: process.env.NODE_ENV === "development" ? err.message : "Something went wrong"
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
-
-const cors = require("cors");
-
-app.use(cors({
-  origin: "*"
-}));
-

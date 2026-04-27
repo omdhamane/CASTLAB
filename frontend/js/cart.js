@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:5000";
+const API_BASE = "https://castlab-i3hm.onrender.com";
 
 /* ---------- CART HELPERS ---------- */
 
@@ -29,34 +29,42 @@ async function loadCart() {
   }
 
   for (const item of cart) {
-    const res = await fetch(`${API_BASE}/api/products/${item.productId}`);
-    const product = await res.json();
+    try {
+      const res = await fetch(`${API_BASE}/api/products/${item.productId}`);
+      if (!res.ok) continue;
 
-    total += product.price * item.quantity;
+      const product = await res.json();
+      if (!product || !product.price) continue;
 
-    const div = document.createElement("div");
-    div.className = "cart-item";
+      const itemTotal = Number(product.price) * Number(item.quantity);
+      total += itemTotal;
 
-    div.innerHTML = `
-      <div class="cart-info">
-        <h4>${product.name}</h4>
-        <p>${product.scale} · ${product.brand}</p>
-        <p class="price">₹${product.price}</p>
-      </div>
+      const div = document.createElement("div");
+      div.className = "cart-item";
 
-      <div class="cart-qty">
-        <button onclick="updateQty('${item.productId}', -1)">−</button>
-        <span>${item.quantity}</span>
-        <button onclick="updateQty('${item.productId}', 1)">+</button>
-      </div>
+      div.innerHTML = `
+        <div class="cart-info">
+          <h4>${product.name}</h4>
+          <p>${product.scale} · ${product.brand}</p>
+          <p class="price">₹${product.price}</p>
+        </div>
 
-      <button class="remove-btn" onclick="removeItem('${item.productId}')">✕</button>
-    `;
+        <div class="cart-qty">
+          <button onclick="updateQty('${item.productId}', -1)">−</button>
+          <span>${item.quantity}</span>
+          <button onclick="updateQty('${item.productId}', 1)">+</button>
+        </div>
 
-    container.appendChild(div);
+        <button class="remove-btn" onclick="removeItem('${item.productId}')">✕</button>
+      `;
+
+      container.appendChild(div);
+    } catch (err) {
+      console.error("Cart load error:", err);
+    }
   }
 
-  totalEl.textContent = total;
+  totalEl.textContent = total.toFixed(2);
 }
 
 /* ---------- UPDATE QTY ---------- */
@@ -96,22 +104,41 @@ async function checkout() {
 
   const cart = getCart();
 
-  const res = await fetch(`${API_BASE}/api/orders`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ items: cart })
-  });
+  if (cart.length === 0) {
+    alert("Cart is empty");
+    return;
+  }
 
-  const data = await res.json();
+  // ✅ IMPORTANT FIX: Correct backend format
+  const orderData = {
+    items: cart.map(item => ({
+      productId: item.productId,
+      quantity: item.quantity
+    }))
+  };
 
-  if (res.ok) {
-    localStorage.removeItem("cart");
-    window.location.href = `invoice.html?file=${data.invoice}`;
-  } else {
-    alert(data.message || "Checkout failed");
+  try {
+    const res = await fetch(`${API_BASE}/api/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(orderData)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.removeItem("cart");
+      alert("Order placed successfully ✅");
+      window.location.href = `invoice.html?file=${encodeURIComponent(data.invoice)}`;
+    } else {
+      alert(data.message || "Checkout failed");
+    }
+  } catch (err) {
+    console.error("Checkout error:", err);
+    alert("Checkout failed");
   }
 }
 

@@ -6,7 +6,10 @@ const {
   loginUser
 } = require("../controllers/auth.controller");
 
+// POST /api/auth/register
 router.post("/register", registerUser);
+
+// POST /api/auth/login
 router.post("/login", loginUser);
 
 module.exports = router;

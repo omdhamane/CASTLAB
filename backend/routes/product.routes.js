@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-// import controllers
 const {
   getProducts,
   getProductById,
@@ -9,14 +8,17 @@ const {
   searchProducts
 } = require("../controllers/product.controller");
 
-// 🔍 SEARCH ROUTE (IMPORTANT: keep this ABOVE :id)
+// ✅ SEARCH must be ABOVE /:id (already correct!)
+// GET /api/products/search?q=something
 router.get("/search", searchProducts);
 
-// Public routes
+// GET /api/products
 router.get("/", getProducts);
+
+// GET /api/products/:id
 router.get("/:id", getProductById);
 
-// Temporary (admin later)
+// POST /api/products
 router.post("/", createProduct);
 
 module.exports = router;
