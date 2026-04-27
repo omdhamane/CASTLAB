@@ -3,24 +3,46 @@ const API_BASE = "http://127.0.0.1:5000";
 const grid = document.getElementById("productGrid");
 const buttons = document.querySelectorAll(".filter-btn");
 
-/* ---------- FETCH PRODUCTS ---------- */
+const params = new URLSearchParams(window.location.search);
+const urlScale = params.get("scale");
+const urlSearch = params.get("search");
 
-async function fetchProducts(scale) {
-  const res = await fetch(`${API_BASE}/api/products?scale=${scale}`);
+/* ---------- FETCH PRODUCTS ---------- */
+async function fetchProducts({ scale, search }) {
+  let url;
+
+  if (search) {
+    url = `${API_BASE}/api/products/search?q=${encodeURIComponent(search)}`;
+  } else if (scale) {
+    url = `${API_BASE}/api/products?scale=${encodeURIComponent(scale)}`;
+  } else {
+    url = `${API_BASE}/api/products`;
+  }
+
+  const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch products");
-  return res.json();
+
+  const data = await res.json();
+
+  // normalize response (VERY IMPORTANT)
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.products)) return data.products;
+
+  return [];
 }
 
 /* ---------- LOAD PRODUCTS ---------- */
-
-async function loadProducts(scale = "1:64") {
+async function loadProducts({ scale = null, search = null } = {}) {
   if (!grid) return;
 
   grid.innerHTML = "";
 
-  const products = await fetchProducts(scale);
+  const products = await fetchProducts({ scale, search });
 
-  if (!products.length) {
+  console.log("LOAD PRODUCTS", { scale, search });
+  console.log("PRODUCTS RECEIVED", products);
+
+  if (!Array.isArray(products) || products.length === 0) {
     grid.innerHTML = "<p style='opacity:.6'>No products found</p>";
     return;
   }
@@ -28,7 +50,8 @@ async function loadProducts(scale = "1:64") {
   products.forEach(product => {
     const card = document.createElement("div");
     card.className = "product-card";
-    card.dataset.id = product._id;
+    card.dataset.id = product._id || product.id;
+
 
     const imageSrc =
       product.images && product.images.length
@@ -36,11 +59,14 @@ async function loadProducts(scale = "1:64") {
         : product.image || "";
 
     card.innerHTML = `
-      <button class="like-btn">♡</button>
+        <div class="product-image">
+          <button class="like-btn" aria-label="Add to wishlist">
+            ♥
+          </button>
 
-      <div class="product-image">
-        <img src="${imageSrc}" alt="${product.name}">
-      </div>
+          <img src="${imageSrc}" alt="${product.name}">
+        </div>
+    
 
       <div class="product-info">
         <h3>${product.name}</h3>
@@ -60,8 +86,7 @@ async function loadProducts(scale = "1:64") {
 }
 
 /* ---------- CART ---------- */
-
-function addToCart(productId) {
+  function addToCart(productId) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
   const existing = cart.find(item => item.productId === productId);
@@ -77,8 +102,7 @@ function addToCart(productId) {
 }
 
 /* ---------- WISHLIST ---------- */
-
-function getWishlist() {
+  function getWishlist() {
   return JSON.parse(localStorage.getItem("wishlist")) || [];
 }
 
@@ -118,14 +142,19 @@ function markWishlistItems() {
 }
 
 /* ---------- EVENTS ---------- */
-
-grid.addEventListener("click", e => {
+  grid.addEventListener("click", e => {
   const card = e.target.closest(".product-card");
   if (!card) return;
 
   const productId = card.dataset.id;
 
-  // ❤️ LIKE / WISHLIST
+  if (!productId) {
+  console.error("Product ID missing", card);
+  return;
+  }
+
+
+  // ❤️ WISHLIST
   if (e.target.classList.contains("like-btn")) {
     const btn = e.target;
     const active = btn.classList.toggle("active");
@@ -142,28 +171,42 @@ grid.addEventListener("click", e => {
     return;
   }
 
-  // 🛒 ADD TO CART
+  // 🛒 CART
   if (e.target.classList.contains("add-btn")) {
     addToCart(productId);
     return;
   }
 
-  // 🔍 OPEN PRODUCT PAGE
+  // 🔍 PRODUCT PAGE
   window.location.href = `product.html?id=${productId}`;
 });
 
-/* ---------- FILTERS ---------- */
-
+/* ---------- FILTER BUTTONS ---------- */
 buttons.forEach(btn => {
   btn.addEventListener("click", () => {
     buttons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    loadProducts(btn.dataset.scale);
+
+    loadProducts({ scale: btn.dataset.scale });
   });
 });
 
 /* ---------- INIT ---------- */
+  document.addEventListener("DOMContentLoaded", () => {
+  // priority: search > scale > default
+  if (urlSearch) {
+    loadProducts({ search: urlSearch });
+    return;
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadProducts();
+  if (urlScale) {
+    loadProducts({ scale: urlScale });
+
+    buttons.forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.scale === urlScale);
+    });
+    return;
+  }
+
+  loadProducts({ scale: "1:64" });
 });
