@@ -111,7 +111,7 @@ async function loadProduct() {
               id="wishlistBtn" 
               class="wishlist-btn ${inWishlist ? "active" : ""}"
             >
-              ${inWishlist ? "♥ Wishlisted" : "♡ Wishlist"}
+              ${inWishlist ? "♥ Wishlisted" : "Wishlist"}
             </button>
 
             <button 
@@ -171,24 +171,24 @@ async function loadProduct() {
     /* ---------- WISHLIST BUTTON ---------- */
     const wishlistBtn = document.getElementById("wishlistBtn");
     if (wishlistBtn) {
-      wishlistBtn.addEventListener("click", () => {
-        const wishlistProduct = {
-          id: product._id,
-          name: product.name,
-          price: product.price,
-          image: images[0]
-        };
+     wishlistBtn.addEventListener("click", () => {
+  const wishlistProduct = {
+    id: product._id,
+    name: product.name,
+    price: product.price,
+    image: images[0]
+  };
 
-        const added = toggleWishlist(wishlistProduct);
+  const added = toggleWishlist(wishlistProduct);
 
-        if (added) {
-          wishlistBtn.textContent = "♥ Wishlisted";
-          wishlistBtn.classList.add("active");
-        } else {
-          wishlistBtn.textContent = "♡ Wishlist";
-          wishlistBtn.classList.remove("active");
-        }
-      });
+  if (added) {
+    wishlistBtn.textContent = "♥ Wishlisted";
+    wishlistBtn.classList.add("active");
+  } else {
+    wishlistBtn.textContent = "Wishlist";
+    wishlistBtn.classList.remove("active");
+  }
+});
     }
 
   } catch (error) {
