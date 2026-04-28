@@ -109,13 +109,19 @@ async function checkout() {
     return;
   }
 
-  // ✅ IMPORTANT FIX: Correct backend format
+  // ✅ DEBUG: Check what cart contains
+  console.log("🛒 Cart contents:", JSON.stringify(cart, null, 2));
+
+  // ✅ FIXED: Correct payload
   const orderData = {
     items: cart.map(item => ({
       productId: item.productId,
-      quantity: item.quantity
+      quantity: Number(item.quantity)
     }))
   };
+
+  // ✅ DEBUG: Check what we are sending
+  console.log("📦 Sending order:", JSON.stringify(orderData, null, 2));
 
   try {
     const res = await fetch(`${API_BASE}/api/orders`, {
@@ -129,16 +135,21 @@ async function checkout() {
 
     const data = await res.json();
 
+    // ✅ DEBUG: Check response
+    console.log("📬 Response:", JSON.stringify(data, null, 2));
+
     if (res.ok) {
       localStorage.removeItem("cart");
       alert("Order placed successfully ✅");
       window.location.href = `invoice.html?file=${encodeURIComponent(data.invoice)}`;
     } else {
-      alert(data.message || "Checkout failed");
+      // ✅ Show detailed error
+      console.error("❌ Order failed:", data);
+      alert(data.errors ? data.errors.join("\n") : data.message);
     }
   } catch (err) {
     console.error("Checkout error:", err);
-    alert("Checkout failed");
+    alert("Checkout failed - check console");
   }
 }
 
