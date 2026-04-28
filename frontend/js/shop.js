@@ -1,4 +1,5 @@
 const API_BASE = "https://castlab-i3hm.onrender.com";
+const FALLBACK_IMAGE = "https://via.placeholder.com/400x250?text=CASTLAB";
 
 const grid = document.getElementById("productGrid");
 const buttons = document.querySelectorAll(".filter-btn");
@@ -8,7 +9,7 @@ const urlScale = params.get("scale");
 const urlSearch = params.get("search");
 
 /* ---------- FETCH PRODUCTS ---------- */
-async function fetchProducts({ scale, search }) {
+async function fetchProducts({ scale, search } = {}) {
   let url;
 
   if (search) {
@@ -24,7 +25,6 @@ async function fetchProducts({ scale, search }) {
 
   const data = await res.json();
 
-  // normalize response (VERY IMPORTANT)
   if (Array.isArray(data)) return data;
   if (data && Array.isArray(data.products)) return data.products;
 
@@ -39,9 +39,6 @@ async function loadProducts({ scale = null, search = null } = {}) {
 
   const products = await fetchProducts({ scale, search });
 
-  console.log("LOAD PRODUCTS", { scale, search });
-  console.log("PRODUCTS RECEIVED", products);
-
   if (!Array.isArray(products) || products.length === 0) {
     grid.innerHTML = "<p style='opacity:.6'>No products found</p>";
     return;
@@ -52,20 +49,21 @@ async function loadProducts({ scale = null, search = null } = {}) {
     card.className = "product-card";
     card.dataset.id = product._id || product.id;
 
-
-   const imageSrc = product.image && product.image !== ""
-  ? product.image
-  : "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?w=400";
+    const imageSrc =
+      product.image && product.image.trim() !== ""
+        ? product.image
+        : FALLBACK_IMAGE;
 
     card.innerHTML = `
-        <div class="product-image">
-          <button class="like-btn" aria-label="Add to wishlist">
-            ♥
-          </button>
+      <div class="product-image">
+        <button class="like-btn" aria-label="Add to wishlist">♥</button>
 
-          <img src="${imageSrc}" alt="${product.name}">
-        </div>
-    
+        <img 
+          src="${imageSrc}" 
+          alt="${product.name}"
+          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+        />
+      </div>
 
       <div class="product-info">
         <h3>${product.name}</h3>
@@ -85,7 +83,7 @@ async function loadProducts({ scale = null, search = null } = {}) {
 }
 
 /* ---------- CART ---------- */
-  function addToCart(productId) {
+function addToCart(productId) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
   const existing = cart.find(item => item.productId === productId);
@@ -101,7 +99,7 @@ async function loadProducts({ scale = null, search = null } = {}) {
 }
 
 /* ---------- WISHLIST ---------- */
-  function getWishlist() {
+function getWishlist() {
   return JSON.parse(localStorage.getItem("wishlist")) || [];
 }
 
@@ -117,7 +115,6 @@ function addToWishlist(product) {
 
   wishlist.push(product);
   saveWishlist(wishlist);
-  console.log("❤️ Wishlist updated:", wishlist);
 }
 
 function removeFromWishlist(id) {
@@ -129,9 +126,7 @@ function markWishlistItems() {
   const wishlist = getWishlist();
 
   wishlist.forEach(item => {
-    const card = document.querySelector(
-      `.product-card[data-id="${item.id}"]`
-    );
+    const card = document.querySelector(`.product-card[data-id="${item.id}"]`);
     if (!card) return;
 
     const btn = card.querySelector(".like-btn");
@@ -141,19 +136,14 @@ function markWishlistItems() {
 }
 
 /* ---------- EVENTS ---------- */
-  grid.addEventListener("click", e => {
+grid.addEventListener("click", e => {
   const card = e.target.closest(".product-card");
   if (!card) return;
 
   const productId = card.dataset.id;
 
-  if (!productId) {
-  console.error("Product ID missing", card);
-  return;
-  }
+  if (!productId) return;
 
-
-  // ❤️ WISHLIST
   if (e.target.classList.contains("like-btn")) {
     const btn = e.target;
     const active = btn.classList.toggle("active");
@@ -170,13 +160,11 @@ function markWishlistItems() {
     return;
   }
 
-  // 🛒 CART
   if (e.target.classList.contains("add-btn")) {
     addToCart(productId);
     return;
   }
 
-  // 🔍 PRODUCT PAGE
   window.location.href = `product.html?id=${productId}`;
 });
 
@@ -191,8 +179,7 @@ buttons.forEach(btn => {
 });
 
 /* ---------- INIT ---------- */
-  document.addEventListener("DOMContentLoaded", () => {
-  // priority: search > scale > default
+document.addEventListener("DOMContentLoaded", () => {
   if (urlSearch) {
     loadProducts({ search: urlSearch });
     return;
@@ -207,5 +194,6 @@ buttons.forEach(btn => {
     return;
   }
 
-  loadProducts({ scale: "1:64" });
+  // ✅ Show ALL products by default
+  loadProducts();
 });
