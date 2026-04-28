@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <title>Product | CASTLAB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Base styles -->
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/pages.css" />
@@ -13,14 +11,12 @@
 
 <body>
 
-  <!-- ================= NAVBAR ================= -->
   <header class="navbar">
     <div class="nav-left">
       <a href="index.html" class="logo-link">
         <span class="castlab-logo">CASTLAB</span>
       </a>
     </div>
-
     <nav class="nav-right">
       <a href="index.html">Home</a>
       <a href="shop.html" class="active">Shop</a>
@@ -30,46 +26,13 @@
     </nav>
   </header>
 
-  <!-- ================= PRODUCT PAGE ================= -->
   <main class="product-page">
-
-    <!-- JS will inject product content here -->
-    <div class="product-detail-card" id="productDetail">
-      <!-- 
-        Expected structure injected by JS:
-
-        <div class="product-detail">
-          <div class="product-detail-image">
-            <img id="mainImage" />
-            <div class="thumbnail-row" id="thumbnails"></div>
-          </div>
-
-          <div class="product-detail-info">
-            ...
-          </div>
-        </div>
-      -->
-      <div class="product-actions">
-  <button class="wishlist-btn">
-    ❤️ Add to Wishlist
-  </button>
-
-  <button class="add-to-cart-btn">
-    Add to Cart
-  </button>
-</div>
-
+    <div id="productDetail">
+      <p style="opacity:0.6; text-align:center;">Loading product...</p>
     </div>
-
   </main>
-  <button id="wishlistBtn">❤️ Add to Wishlist</button>
 
-
-  <!-- ================= SCRIPT ================= -->
   <script src="js/product.js"></script>
-  <script src="js/wishlist-utils.js"></script>
-
 
 </body>
 </html>
-
