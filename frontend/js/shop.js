@@ -53,10 +53,9 @@ async function loadProducts({ scale = null, search = null } = {}) {
     card.dataset.id = product._id || product.id;
 
 
-    const imageSrc =
-      product.images && product.images.length
-        ? product.images[0]
-        : product.image || "";
+   const imageSrc = product.image && product.image !== ""
+  ? product.image
+  : "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?w=400";
 
     card.innerHTML = `
         <div class="product-image">
