@@ -208,3 +208,41 @@ body {
 .top-nav .nav-icons a:hover {
   color: #ffffff;
 }
+/* ================= CART BADGE ================= */
+
+.cart-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cart-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  transition: transform 0.3s ease;
+}
+
+.cart-badge.hidden {
+  display: none;
+}
+
+.cart-badge.bump {
+  animation: badgeBump 0.3s ease;
+}
+
+@keyframes badgeBump {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}

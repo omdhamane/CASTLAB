@@ -5,46 +5,58 @@
   <title>Cart | CASTLAB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Shared styles -->
+  <!-- Styles -->
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/pages.css" />
 </head>
+
 <body>
 
-  <!-- ========== NAVBAR (SAME EVERYWHERE) ========== -->
-  <header class="navbar">
-    <div class="nav-left">
-      <a href="index.html" class="logo-link">
-        <span class="castlab-logo">CASTLAB</span>
-      </a>
-    </div>
+  <div class="page-transition">
 
-    <nav class="nav-right">
-      <a href="index.html">Home</a>
-      <a href="shop.html">Shop</a>
-      <a href="wishlist.html">Wishlist</a>
-      <a href="cart.html" class="active">Cart</a>
-      <a href="login.html">Login</a>
-    </nav>
-  </header>
+    <!-- ================= NAVBAR ================= -->
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="index.html" class="logo-link">
+          <span class="castlab-logo">CASTLAB</span>
+        </a>
+      </div>
 
-  <!-- ========== CART PAGE ========== -->
-  <main class="cart-container">
-    <h2>Your Cart</h2>
+      <nav class="nav-right">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="wishlist.html">Wishlist</a>
+        <a href="cart.html" class="active cart-nav-link">
+          Cart
+          <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
 
-    <div id="cartItems"></div>
+    <!-- ================= CART PAGE ================= -->
+    <main class="cart-container">
+      <h2>Your Cart</h2>
 
-    <div class="cart-summary">
-      <strong>Total: ₹<span id="cartTotal">0</span></strong><br />
-      <button id="checkoutBtn" class="checkout-btn">
-        Proceed to Checkout
-      </button>
-    </div>
-  </main>
+      <div id="cartItems"></div>
+
+      <div class="cart-summary">
+        <strong>Total: ₹<span id="cartTotal">0</span></strong>
+        <button id="checkoutBtn" class="checkout-btn">
+          Proceed to Checkout
+        </button>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ================= SCRIPTS ================= -->
 
   <script src="js/cart.js"></script>
   <script src="js/wishlist-utils.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/transition.js"></script>
 
 </body>
 </html>

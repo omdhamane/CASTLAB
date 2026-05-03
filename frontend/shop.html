@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Shop | CASTLAB</title>
 
-  <!-- Base styles -->
+  <!-- Styles -->
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/pages.css">
@@ -13,47 +13,56 @@
 
 <body>
 
-  <!-- ================= NAVBAR ================= -->
-  <header class="navbar">
-   <div class="nav-left">
-      <a href="index.html" class="logo-link">
-      <span class="castlab-logo">CASTLAB</span>
-      </a>
+  <div class="page-transition">
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="index.html" class="logo-link">
+          <span class="castlab-logo">CASTLAB</span>
+        </a>
+      </div>
+
+      <nav class="nav-right">
+        <a href="index.html">Home</a>
+        <a href="shop.html" class="active">Shop</a>
+        <a href="wishlist.html">Wishlist</a>
+        <a href="cart.html" class="cart-nav-link">
+          Cart
+          <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+
+    <!-- ================= SHOP PAGE ================= -->
+    <main class="shop-container">
+
+      <!-- Section Title -->
+      <h2 class="shop-title">The Collection</h2>
+
+      <!-- FILTERS -->
+      <section class="filters">
+        <button class="filter-btn active" data-scale="1:64">1:64</button>
+        <button class="filter-btn" data-scale="1:32">1:32</button>
+        <button class="filter-btn" data-scale="1:18">1:18</button>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section id="productGrid" class="product-grid">
+        <!-- Dynamic product cards from shop.js -->
+      </section>
+
+    </main>
+
   </div>
 
-
-    <nav class="nav-right">
-      <a href="index.html">Home</a>
-      <a href="shop.html" class="active">Shop</a>
-      <a href="wishlist.html">Wishlist</a>
-      <a href="cart.html">Cart</a>
-      <a href="login.html">Login</a>
-    </nav>
-  </header>
-
-  <!-- ================= SHOP PAGE ================= -->
-  <main class="shop-container">
-
-    <!-- FILTERS -->
-    <section class="filters">
-      <button class="filter-btn active" data-scale="1:64">1:64</button>
-      <button class="filter-btn" data-scale="1:32">1:32</button>
-      <button class="filter-btn" data-scale="1:18">1:18</button>
-    </section>
-
-    <!-- PRODUCTS (MongoDB → JS injects here) -->
-    <section id="productGrid" class="product-grid">
-      <!-- Dynamic product cards from shop.js -->
-    </section>
-
-  </main>
-
-
-
   <!-- ================= SCRIPTS ================= -->
+
   <script src="js/shop.js"></script>
   <script src="js/wishlist-utils.js"></script>
-
+  <script src="js/navbar.js"></script>
+  <script src="js/transition.js"></script>
 
 </body>
 </html>

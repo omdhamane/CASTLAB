@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Product | CASTLAB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Styles -->
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/pages.css" />
@@ -11,28 +13,42 @@
 
 <body>
 
-  <header class="navbar">
-    <div class="nav-left">
-      <a href="index.html" class="logo-link">
-        <span class="castlab-logo">CASTLAB</span>
-      </a>
-    </div>
-    <nav class="nav-right">
-      <a href="index.html">Home</a>
-      <a href="shop.html" class="active">Shop</a>
-      <a href="wishlist.html">Wishlist</a>
-      <a href="cart.html">Cart</a>
-      <a href="login.html">Login</a>
-    </nav>
-  </header>
+  <div class="page-transition">
 
-  <main class="product-page">
-    <div id="productDetail">
-      <p style="opacity:0.6; text-align:center;">Loading product...</p>
-    </div>
-  </main>
+    <!-- ================= NAVBAR ================= -->
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="index.html" class="logo-link">
+          <span class="castlab-logo">CASTLAB</span>
+        </a>
+      </div>
+
+      <nav class="nav-right">
+        <a href="index.html">Home</a>
+        <a href="shop.html" class="active">Shop</a>
+        <a href="wishlist.html">Wishlist</a>
+        <a href="cart.html" class="cart-nav-link">
+          Cart
+          <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+
+    <!-- ================= PRODUCT PAGE ================= -->
+    <main class="product-page">
+      <div id="productDetail">
+        <p style="opacity:0.6; text-align:center;">Loading product...</p>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ================= SCRIPTS ================= -->
 
   <script src="js/product.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/transition.js"></script>
 
 </body>
 </html>

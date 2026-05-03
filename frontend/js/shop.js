@@ -95,9 +95,13 @@ function addToCart(productId) {
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
-  console.log("🛒 Cart updated:", cart);
-}
 
+  // ✅ Update badge
+  updateCartBadge();
+
+  // ✅ Visual feedback on button
+  showAddedFeedback();
+}
 /* ---------- WISHLIST ---------- */
 function getWishlist() {
   return JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -197,3 +201,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // ✅ Show ALL products by default
   loadProducts();
 });
+
+function showAddedFeedback() {
+  // Create floating toast notification
+  const toast = document.createElement("div");
+  toast.className = "cart-toast";
+  toast.textContent = "✅ Added to Cart";
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.classList.add("show"), 10);
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
+}

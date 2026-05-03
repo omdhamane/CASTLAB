@@ -8,8 +8,8 @@ function getCart() {
 
 function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartBadge(); // ✅ update badge instantly
 }
-
 /* ---------- LOAD CART ---------- */
 
 async function loadCart() {

@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>Wishlist | CASTLAB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- Styles -->
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
@@ -11,26 +13,45 @@
 </head>
 
 <body>
-  <header>
-    <h1>CASTLAB</h1>
-    <nav>
-      <a href="shop.html">Shop</a>
-      <a href="cart.html">Cart</a>
-      <a href="wishlist.html" class="active">Wishlist</a>
-    </nav>
-  </header>
 
-  <main class="wishlist-page">
-    <h2>Your Wishlist <b></b></h2>
-   
+  <div class="page-transition">
 
-    <div id="wishlistContainer" class="wishlist-grid">
-      <!-- JS Injected -->
-    </div>
-  </main>
+    <!-- ================= NAVBAR ================= -->
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="index.html" class="logo-link">
+          <span class="castlab-logo">CASTLAB</span>
+        </a>
+      </div>
 
+      <nav class="nav-right">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="wishlist.html" class="active">Wishlist</a>
+        <a href="cart.html" class="cart-nav-link">
+          Cart
+          <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
 
+    <!-- ================= WISHLIST PAGE ================= -->
+    <main class="wishlist-page">
+      <h2>Your Wishlist</h2>
+
+      <div id="wishlistContainer" class="wishlist-grid">
+        <!-- JS Injected -->
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ================= SCRIPTS ================= -->
 
   <script src="js/wishlist.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/transition.js"></script>
+
 </body>
 </html>

@@ -3,63 +3,165 @@
 <head>
   <meta charset="UTF-8" />
   <title>CASTLAB</title>
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-family: "Inter", sans-serif;
+      background: #000;
+      overflow: hidden;
+      color: white;
+    }
+
+    /* ================= PAGE TRANSITION ================= */
+
+    .page-transition {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.6s ease;
+    }
+
+    .page-transition.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ================= HERO SECTION ================= */
+
+    .hero {
+      position: relative;
       height: 100vh;
-    }
-
-    video {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      overflow: hidden;
     }
 
-    .skip-btn {
+    .hero-video {
       position: absolute;
-      bottom: 40px;
-      right: 40px;
-      padding: 8px 16px;
-      border: 1px solid var(--border-subtle);
-      background: transparent;
-      color: var(--text-primary);
-      cursor: pointer;
+      top: 50%;
+      left: 50%;
+      width: 110%;
+      height: 110%;
+      object-fit: cover;
+      transform: translate(-50%, -50%) scale(1);
+      animation: slowZoom 25s ease-in-out infinite alternate;
+      z-index: 1;
     }
 
-    .skip-btn:hover {
-      background: var(--text-primary);
-      color: var(--bg-main);
+    @keyframes slowZoom {
+      from { transform: translate(-50%, -50%) scale(1); }
+      to   { transform: translate(-50%, -50%) scale(1.1); }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.85)
+      );
+      z-index: 2;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      animation: fadeIn 1.5s ease forwards;
+      padding: 0 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 800;
+      letter-spacing: 4px;
+    }
+
+    .hero-subtitle {
+      margin-top: 1.2rem;
+      font-size: 1.2rem;
+      opacity: 0.75;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .hero-btn {
+      margin-top: 3rem;
+      padding: 16px 34px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .hero-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(255, 77, 77, 0.4);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title { letter-spacing: 2px; }
+      .hero-subtitle { font-size: 1rem; }
     }
   </style>
 </head>
+
 <body>
 
-  <video autoplay muted playsinline id="introVideo">
-    <source src="assets/videos/intro.mp4" type="video/mp4" />
-  </video>
+  <div class="page-transition">
 
-  <button class="skip-btn" onclick="enterSite()">Skip</button>
+    <div class="hero">
 
-  <script>
-    const video = document.getElementById("introVideo");
-    video.playbackRate = 2;
+      <video 
+        class="hero-video"
+        autoplay
+        muted
+        loop
+        playsinline
+      >
+        <source src="assets/videos/intro.mp4" type="video/mp4" />
+      </video>
 
-    video.onended = enterSite;
+      <div class="hero-overlay"></div>
 
-    function enterSite() {
-      window.location.href = "login.html";
-    }
-  </script>
-  <script src="js/wishlist-utils.js"></script>
+      <div class="hero-content">
+        <div class="hero-title">CASTLAB</div>
+        <div class="hero-subtitle">
+          Precision in Miniature.  
+          Discover premium diecast models across scales and legends.
+        </div>
 
+        <!-- IMPORTANT: Use anchor instead of manual fade -->
+        <a href="shop.html" class="hero-btn">
+          Enter Garage →
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/transition.js"></script>
 
 </body>
 </html>
- 
