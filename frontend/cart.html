@@ -11,6 +11,18 @@
   <link rel="stylesheet" href="css/pages.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/responsive.css" />
+
+  <style>
+    /* Hide scrollbar for checkout modal */
+    #checkoutModal::-webkit-scrollbar,
+    #checkoutModal .modal-content::-webkit-scrollbar {
+      display: none;
+    }
+    #checkoutModal, #checkoutModal .modal-content {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -69,8 +81,8 @@
     </main>
 
     <!-- ================= CHECKOUT MODAL ================= -->
-    <div id="checkoutModal" class="modal hidden">
-      <div class="modal-content auth-card" style="max-width: 600px; width: 100%; position: relative; padding: 2.5rem; max-height: 90vh; overflow-y: auto;">
+    <div id="checkoutModal" class="modal hidden" style="align-items: flex-start; padding-top: 5vh; overflow-y: auto;">
+      <div class="modal-content auth-card" style="max-width: 600px; width: 100%; position: relative; padding: 2.5rem; margin: auto;">
         <button id="closeModalBtn" class="remove-btn" style="position: absolute; top: 1rem; right: 1rem; background: transparent;">✕</button>
         <div class="auth-header" style="margin-bottom: 1rem;">
           <h2>Confirm Details</h2>
