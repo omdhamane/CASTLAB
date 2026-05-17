@@ -712,6 +712,19 @@ body::before {
 }
 
 /* ======================================================
+   ACCOUNT PAGE
+   ====================================================== */
+
+.account-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8rem 2rem 4rem;
+  background: transparent;
+}
+
+/* ======================================================
    PRODUCT DETAIL PAGE
    ====================================================== */
 
