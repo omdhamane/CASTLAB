@@ -49,34 +49,9 @@ function renderPedestalCard(product) {
   return card;
 }
 
-function updateScrollbar(section) {
-  const row = section.querySelector(".pedestal-row");
-  const thumb = section.querySelector(".pedestal-scrollbar-thumb");
-  const track = section.querySelector(".pedestal-scrollbar");
-  if (!row || !thumb || !track) return;
-
-  const maxScroll = row.scrollWidth - row.clientWidth;
-
-  if (maxScroll <= 0) {
-    thumb.style.width = "100%";
-    thumb.style.left = "0";
-    track.style.opacity = "0.35";
-    return;
-  }
-
-  track.style.opacity = "1";
-  const thumbPercent = Math.max((row.clientWidth / row.scrollWidth) * 100, 18);
-  thumb.style.width = `${thumbPercent}%`;
-  thumb.style.left = `${(row.scrollLeft / maxScroll) * (100 - thumbPercent)}%`;
-}
-
 function initPedestalScroll(section) {
   const row = section.querySelector(".pedestal-row");
-  const track = section.querySelector(".pedestal-scrollbar");
   if (!row) return;
-
-  row.addEventListener("scroll", () => updateScrollbar(section));
-  window.addEventListener("resize", () => updateScrollbar(section));
 
   section.querySelectorAll(".pedestal-arrow").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -87,15 +62,6 @@ function initPedestalScroll(section) {
       });
     });
   });
-
-  track?.addEventListener("click", (e) => {
-    const rect = track.getBoundingClientRect();
-    const ratio = (e.clientX - rect.left) / rect.width;
-    const maxScroll = row.scrollWidth - row.clientWidth;
-    row.scrollLeft = ratio * maxScroll;
-  });
-
-  updateScrollbar(section);
 }
 
 async function loadFeaturedRow({ id, featured, fallback }) {
