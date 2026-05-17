@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("saveProfileBtn");
 
   // Fetch current profile
-  fetch(`${window.API_BASE_URL}/auth/profile`, {
+  fetch(`${API_BASE}/api/auth/profile`, {
     headers: { Authorization: `Bearer ${token}` }
   })
     .then(res => res.json())
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const res = await fetch(`${window.API_BASE_URL}/auth/profile`, {
+      const res = await fetch(`${API_BASE}/api/auth/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
