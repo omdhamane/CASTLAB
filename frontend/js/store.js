@@ -59,6 +59,17 @@ function logoutUser() {
   window.location.href = "login.html";
 }
 
+function getUserInitials(name) {
+  if (!name) return "?";
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
 function updateCartBadge() {
   const count = getCartCount();
   const link = document.getElementById("cartNavLink");
