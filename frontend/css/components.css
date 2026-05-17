@@ -322,15 +322,15 @@ input:focus {
 }
 
 .pedestal-info {
-  padding: 0.75rem 0.35rem 0.25rem;
-  min-height: 4.5rem;
+  padding: 0.85rem 0.5rem 0.6rem;
+  min-height: 5rem;
 }
 
 .pedestal-info h3 {
   font-size: 0.9rem;
   font-weight: 600;
-  line-height: 1.4;
-  margin: 0 0 0.4rem;
+  line-height: 1.45;
+  margin: 0 0 0.5rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -340,13 +340,13 @@ input:focus {
 .pedestal-info p {
   font-size: 0.8rem;
   line-height: 1.5;
-  margin: 0;
+  margin: 0 0 0.65rem;
   opacity: 0.72;
 }
 
 .pedestal-info .view-link {
   display: inline-block;
-  margin-top: 0.5rem;
+  margin-top: 0;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
