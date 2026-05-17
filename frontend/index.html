@@ -123,19 +123,55 @@
 
 <!-- ================= FEATURED SLIDERS ================= -->
 
-<section class="pedestal">
-  <h2>Best Sellers</h2>
-  <div class="pedestal-row" id="bestSellersRow"></div>
+<section class="pedestal" data-pedestal>
+  <div class="pedestal-top">
+    <h2>Best Sellers</h2>
+    <div class="pedestal-controls">
+      <button type="button" class="pedestal-arrow" data-scroll="left" aria-label="Scroll left">‹</button>
+      <button type="button" class="pedestal-arrow" data-scroll="right" aria-label="Scroll right">›</button>
+    </div>
+  </div>
+  <div class="pedestal-scroll-area">
+    <div class="pedestal-row" id="bestSellersRow"></div>
+    <div class="pedestal-scrollbar" role="scrollbar" aria-label="Scroll products">
+      <div class="pedestal-scrollbar-thumb"></div>
+    </div>
+    <p class="pedestal-hint">← Drag scrollbar or use arrows to browse →</p>
+  </div>
 </section>
 
-<section class="pedestal pedestal-alt">
-  <h2>New Arrivals</h2>
-  <div class="pedestal-row" id="newArrivalsRow"></div>
+<section class="pedestal pedestal-alt" data-pedestal>
+  <div class="pedestal-top">
+    <h2>New Arrivals</h2>
+    <div class="pedestal-controls">
+      <button type="button" class="pedestal-arrow" data-scroll="left" aria-label="Scroll left">‹</button>
+      <button type="button" class="pedestal-arrow" data-scroll="right" aria-label="Scroll right">›</button>
+    </div>
+  </div>
+  <div class="pedestal-scroll-area">
+    <div class="pedestal-row" id="newArrivalsRow"></div>
+    <div class="pedestal-scrollbar" role="scrollbar" aria-label="Scroll products">
+      <div class="pedestal-scrollbar-thumb"></div>
+    </div>
+    <p class="pedestal-hint">← Drag scrollbar or use arrows to browse →</p>
+  </div>
 </section>
 
-<section class="pedestal">
-  <h2>Limited Editions</h2>
-  <div class="pedestal-row" id="limitedEditionsRow"></div>
+<section class="pedestal" data-pedestal>
+  <div class="pedestal-top">
+    <h2>Limited Editions</h2>
+    <div class="pedestal-controls">
+      <button type="button" class="pedestal-arrow" data-scroll="left" aria-label="Scroll left">‹</button>
+      <button type="button" class="pedestal-arrow" data-scroll="right" aria-label="Scroll right">›</button>
+    </div>
+  </div>
+  <div class="pedestal-scroll-area">
+    <div class="pedestal-row" id="limitedEditionsRow"></div>
+    <div class="pedestal-scrollbar" role="scrollbar" aria-label="Scroll products">
+      <div class="pedestal-scrollbar-thumb"></div>
+    </div>
+    <p class="pedestal-hint">← Drag scrollbar or use arrows to browse →</p>
+  </div>
 </section>
 
 <!-- ================= THE LAB JOURNAL ================= -->
@@ -189,4 +225,4 @@
 <script src="js/navbar.js"></script>
 
 </body>
- </html>
+</html>

@@ -14,8 +14,7 @@ async function fetchFeatured(featured) {
   if (!res.ok) return [];
 
   const data = await res.json();
-  const list = Array.isArray(data) ? data : data.products || [];
-  return list;
+  return Array.isArray(data) ? data : data.products || [];
 }
 
 async function fetchRecent(limit = 8) {
@@ -36,25 +35,75 @@ function renderPedestalCard(product) {
 
   const card = document.createElement("a");
   card.href = `product.html?id=${id}`;
-  card.className = "pedestal-card product-card";
+  card.className = "pedestal-card";
   card.innerHTML = `
     <div class="product-stage pedestal-stage">
       <img src="${imageSrc}" alt="${product.name}" loading="lazy"
         onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'" />
     </div>
-    <div class="pedestal-hover">
+    <div class="pedestal-info">
       <h3>${product.name}</h3>
       <p>${product.brand} · ₹${product.price}</p>
-      <span class="btn outline btn-ripple">View Model</span>
+      <span class="view-link">View Model →</span>
     </div>
   `;
   return card;
+}
+
+function updateScrollbar(section) {
+  const row = section.querySelector(".pedestal-row");
+  const thumb = section.querySelector(".pedestal-scrollbar-thumb");
+  const track = section.querySelector(".pedestal-scrollbar");
+  if (!row || !thumb || !track) return;
+
+  const maxScroll = row.scrollWidth - row.clientWidth;
+
+  if (maxScroll <= 0) {
+    thumb.style.width = "100%";
+    thumb.style.left = "0";
+    track.style.opacity = "0.35";
+    return;
+  }
+
+  track.style.opacity = "1";
+  const thumbPercent = Math.max((row.clientWidth / row.scrollWidth) * 100, 18);
+  thumb.style.width = `${thumbPercent}%`;
+  thumb.style.left = `${(row.scrollLeft / maxScroll) * (100 - thumbPercent)}%`;
+}
+
+function initPedestalScroll(section) {
+  const row = section.querySelector(".pedestal-row");
+  const track = section.querySelector(".pedestal-scrollbar");
+  if (!row) return;
+
+  row.addEventListener("scroll", () => updateScrollbar(section));
+  window.addEventListener("resize", () => updateScrollbar(section));
+
+  section.querySelectorAll(".pedestal-arrow").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const amount = row.clientWidth * 0.75;
+      row.scrollBy({
+        left: btn.dataset.scroll === "left" ? -amount : amount,
+        behavior: "smooth"
+      });
+    });
+  });
+
+  track?.addEventListener("click", (e) => {
+    const rect = track.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    const maxScroll = row.scrollWidth - row.clientWidth;
+    row.scrollLeft = ratio * maxScroll;
+  });
+
+  updateScrollbar(section);
 }
 
 async function loadFeaturedRow({ id, featured, fallback }) {
   const row = document.getElementById(id);
   if (!row) return;
 
+  const section = row.closest("[data-pedestal]");
   row.innerHTML = `<p class="pedestal-loading">Loading…</p>`;
 
   let products = await fetchFeatured(featured);
@@ -67,12 +116,15 @@ async function loadFeaturedRow({ id, featured, fallback }) {
 
   if (products.length === 0) {
     row.innerHTML = `<p class="pedestal-empty">Coming soon — tag products in admin.</p>`;
+    if (section) initPedestalScroll(section);
     return;
   }
 
   products.forEach((product) => {
     row.appendChild(renderPedestalCard(product));
   });
+
+  if (section) initPedestalScroll(section);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

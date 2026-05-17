@@ -25,15 +25,17 @@
   }
 }
 
-/* Product card hover glow */
-.product-card {
+/* Product card hover glow (shop grid only — not pedestal) */
+.shop-container .product-card,
+#productGrid .product-card {
   transition:
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.35s ease,
     border-color 0.35s ease;
 }
 
-.product-card:hover {
+.shop-container .product-card:hover,
+#productGrid .product-card:hover {
   transform: translateY(-8px) scale(1.02);
   border-color: rgba(255, 77, 77, 0.35);
   box-shadow:
