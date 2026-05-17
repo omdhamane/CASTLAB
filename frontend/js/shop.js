@@ -1,50 +1,88 @@
 const API_BASE = "https://castlab-i3hm.onrender.com";
-const FALLBACK_IMAGE = "https://via.placeholder.com/400x250?text=CASTLAB";
+const FALLBACK_IMAGE = "https://via.placeholder.com/400x400?text=CASTLAB";
+
+const CATEGORY_LABELS = {
+  "jdm-legends": "JDM Legends",
+  motorsport: "Motorsport Collection",
+  hypercars: "Hypercars",
+  "muscle-cars": "Muscle Cars",
+  suvs: "SUVs"
+};
 
 const grid = document.getElementById("productGrid");
-const buttons = document.querySelectorAll(".filter-btn");
+const buttons = document.querySelectorAll(".filter-btn[data-scale]");
+const categoryLinks = document.querySelectorAll(".category-filters a");
 
 const params = new URLSearchParams(window.location.search);
 const urlScale = params.get("scale");
 const urlSearch = params.get("search");
+const urlCategory = params.get("category");
+
+const shopTitle = document.querySelector(".shop-title");
+const categoryLabel = document.getElementById("shopCategoryLabel");
 
 /* ---------- FETCH PRODUCTS ---------- */
-async function fetchProducts({ scale, search } = {}) {
-  let url;
+async function fetchProducts({ scale, search, category } = {}) {
+  const qs = new URLSearchParams();
+  if (scale) qs.set("scale", scale);
+  if (category) qs.set("category", category);
 
+  let url;
   if (search) {
     url = `${API_BASE}/api/products/search?q=${encodeURIComponent(search)}`;
-  } else if (scale) {
-    url = `${API_BASE}/api/products?scale=${encodeURIComponent(scale)}`;
   } else {
-    url = `${API_BASE}/api/products`;
+    url = `${API_BASE}/api/products${qs.toString() ? `?${qs}` : ""}`;
   }
 
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch products");
 
   const data = await res.json();
-
   if (Array.isArray(data)) return data;
   if (data && Array.isArray(data.products)) return data.products;
-
   return [];
 }
 
-/* ---------- LOAD PRODUCTS ---------- */
-async function loadProducts({ scale = null, search = null } = {}) {
-  if (!grid) return;
-
-  grid.innerHTML = "";
-
-  const products = await fetchProducts({ scale, search });
-
-  if (!Array.isArray(products) || products.length === 0) {
-    grid.innerHTML = "<p style='opacity:.6'>No products found</p>";
+function updateShopHeading({ scale, category, search }) {
+  if (search) {
+    if (shopTitle) shopTitle.textContent = `Results for “${search}”`;
+    if (categoryLabel) categoryLabel.textContent = "";
     return;
   }
 
-  products.forEach(product => {
+  if (category && CATEGORY_LABELS[category]) {
+    if (shopTitle) shopTitle.textContent = CATEGORY_LABELS[category];
+    if (categoryLabel) categoryLabel.textContent = "Collection";
+    return;
+  }
+
+  if (shopTitle) shopTitle.textContent = "The Collection";
+  if (categoryLabel) categoryLabel.textContent = scale ? `Scale ${scale}` : "";
+}
+
+function setActiveCategoryLink(category) {
+  categoryLinks.forEach((link) => {
+    const linkCat = new URL(link.href, window.location.origin).searchParams.get("category");
+    link.classList.toggle("active", category && linkCat === category);
+  });
+}
+
+/* ---------- LOAD PRODUCTS ---------- */
+async function loadProducts({ scale = null, search = null, category = null } = {}) {
+  if (!grid) return;
+
+  grid.innerHTML = "";
+  updateShopHeading({ scale, category, search });
+  setActiveCategoryLink(category);
+
+  const products = await fetchProducts({ scale, search, category });
+
+  if (!Array.isArray(products) || products.length === 0) {
+    grid.innerHTML = "<p style='opacity:.6;text-align:center'>No products found</p>";
+    return;
+  }
+
+  products.forEach((product) => {
     const card = document.createElement("div");
     card.className = "product-card";
     card.dataset.id = product._id || product.id;
@@ -55,23 +93,20 @@ async function loadProducts({ scale = null, search = null } = {}) {
         : FALLBACK_IMAGE;
 
     card.innerHTML = `
-      <div class="product-image">
-        <button class="like-btn" aria-label="Add to wishlist">♥</button>
-
-        <img 
-          src="${imageSrc}" 
+      <div class="product-stage">
+        <button class="like-btn btn-ripple" aria-label="Add to wishlist">♡</button>
+        <img
+          src="${imageSrc}"
           alt="${product.name}"
           onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
         />
       </div>
-
       <div class="product-info">
         <h3>${product.name}</h3>
         <p class="subtitle">${product.brand}</p>
-
         <div class="price-row">
           <span class="price">₹${product.price}</span>
-          <button class="add-btn">+</button>
+          <button class="add-btn btn-ripple" type="button">+</button>
         </div>
       </div>
     `;
@@ -85,8 +120,7 @@ async function loadProducts({ scale = null, search = null } = {}) {
 /* ---------- CART ---------- */
 function addToCart(productId) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  const existing = cart.find(item => item.productId === productId);
+  const existing = cart.find((item) => item.productId === productId);
 
   if (existing) {
     existing.quantity += 1;
@@ -95,13 +129,10 @@ function addToCart(productId) {
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
-
-  // ✅ Update badge
   updateCartBadge();
-
-  // ✅ Visual feedback on button
   showAddedFeedback();
 }
+
 /* ---------- WISHLIST ---------- */
 function getWishlist() {
   return JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -112,27 +143,20 @@ function saveWishlist(wishlist) {
 }
 
 function addToWishlist(product) {
-  let wishlist = getWishlist();
-
-  const exists = wishlist.some(item => item.id === product.id);
-  if (exists) return;
-
+  const wishlist = getWishlist();
+  if (wishlist.some((item) => item.id === product.id)) return;
   wishlist.push(product);
   saveWishlist(wishlist);
 }
 
 function removeFromWishlist(id) {
-  let wishlist = getWishlist().filter(item => item.id !== id);
-  saveWishlist(wishlist);
+  saveWishlist(getWishlist().filter((item) => item.id !== id));
 }
 
 function markWishlistItems() {
-  const wishlist = getWishlist();
-
-  wishlist.forEach(item => {
+  getWishlist().forEach((item) => {
     const card = document.querySelector(`.product-card[data-id="${item.id}"]`);
     if (!card) return;
-
     const btn = card.querySelector(".like-btn");
     btn.classList.add("active");
     btn.textContent = "♥";
@@ -140,12 +164,11 @@ function markWishlistItems() {
 }
 
 /* ---------- EVENTS ---------- */
-grid.addEventListener("click", e => {
+grid.addEventListener("click", (e) => {
   const card = e.target.closest(".product-card");
   if (!card) return;
 
   const productId = card.dataset.id;
-
   if (!productId) return;
 
   if (e.target.classList.contains("like-btn")) {
@@ -165,6 +188,8 @@ grid.addEventListener("click", e => {
   }
 
   if (e.target.classList.contains("add-btn")) {
+    e.target.classList.add("pulse");
+    setTimeout(() => e.target.classList.remove("pulse"), 350);
     addToCart(productId);
     return;
   }
@@ -172,13 +197,18 @@ grid.addEventListener("click", e => {
   window.location.href = `product.html?id=${productId}`;
 });
 
-/* ---------- FILTER BUTTONS ---------- */
-buttons.forEach(btn => {
+buttons.forEach((btn) => {
   btn.addEventListener("click", () => {
-    buttons.forEach(b => b.classList.remove("active"));
+    buttons.forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
 
-    loadProducts({ scale: btn.dataset.scale });
+    const scale = btn.dataset.scale;
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.delete("category");
+    newUrl.searchParams.set("scale", scale);
+    window.history.replaceState({}, "", newUrl);
+
+    loadProducts({ scale });
   });
 });
 
@@ -189,21 +219,28 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  if (urlCategory) {
+    loadProducts({ category: urlCategory, scale: urlScale || null });
+    if (urlScale) {
+      buttons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.scale === urlScale);
+      });
+    }
+    return;
+  }
+
   if (urlScale) {
     loadProducts({ scale: urlScale });
-
-    buttons.forEach(btn => {
+    buttons.forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.scale === urlScale);
     });
     return;
   }
 
-  // ✅ Show ALL products by default
   loadProducts();
 });
 
 function showAddedFeedback() {
-  // Create floating toast notification
   const toast = document.createElement("div");
   toast.className = "cart-toast";
   toast.textContent = "✅ Added to Cart";

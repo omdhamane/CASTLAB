@@ -1,18 +1,43 @@
 const Product = require("../models/Product");
 
-// GET ALL PRODUCTS (with optional scale filter)
+const VALID_SCALES = ["1:64", "1:32", "1:18"];
+const VALID_CATEGORIES = Product.CATEGORIES || [
+  "jdm-legends",
+  "motorsport",
+  "hypercars",
+  "muscle-cars",
+  "suvs"
+];
+const VALID_FEATURED = ["best-seller", "new-arrival", "limited"];
+
+// GET ALL PRODUCTS (scale, category, featured filters)
 exports.getProducts = async (req, res) => {
   try {
-    const { scale } = req.query;
+    const { scale, category, featured } = req.query;
 
     let filter = {};
+
     if (scale) {
-      // ✅ Validate scale value
-      const validScales = ["1:64", "1:32", "1:18"];
-      if (!validScales.includes(scale)) {
+      if (!VALID_SCALES.includes(scale)) {
         return res.status(400).json({ message: "Invalid scale. Use 1:64, 1:32, or 1:18" });
       }
       filter.scale = scale;
+    }
+
+    if (category) {
+      if (!VALID_CATEGORIES.includes(category)) {
+        return res.status(400).json({ message: "Invalid category" });
+      }
+      filter.category = category;
+    }
+
+    if (featured) {
+      if (!VALID_FEATURED.includes(featured)) {
+        return res.status(400).json({ message: "Invalid featured type" });
+      }
+      if (featured === "best-seller") filter.isBestSeller = true;
+      if (featured === "new-arrival") filter.isNewArrival = true;
+      if (featured === "limited") filter.isLimitedEdition = true;
     }
 
     const products = await Product.find(filter).sort({ createdAt: -1 });
@@ -51,20 +76,32 @@ exports.getProductById = async (req, res) => {
 // CREATE PRODUCT
 exports.createProduct = async (req, res) => {
   try {
-    const { name, brand, scale, price, image, stock, description } = req.body;
+    const {
+      name,
+      brand,
+      scale,
+      price,
+      image,
+      stock,
+      description,
+      category,
+      isBestSeller,
+      isNewArrival,
+      isLimitedEdition
+    } = req.body;
 
-    // ✅ FIXED: Added input validation
     if (!name || !brand || !scale || !price) {
       return res.status(400).json({ message: "Name, brand, scale and price are required" });
     }
 
-    // Validate scale
-    const validScales = ["1:64", "1:32", "1:18"];
-    if (!validScales.includes(scale)) {
+    if (!VALID_SCALES.includes(scale)) {
       return res.status(400).json({ message: "Invalid scale. Use 1:64, 1:32, or 1:18" });
     }
 
-    // Validate price
+    if (category && !VALID_CATEGORIES.includes(category)) {
+      return res.status(400).json({ message: "Invalid category" });
+    }
+
     if (price <= 0) {
       return res.status(400).json({ message: "Price must be greater than 0" });
     }
@@ -76,7 +113,11 @@ exports.createProduct = async (req, res) => {
       price,
       image: image || "",
       stock: stock || 0,
-      description: description || ""
+      description: description || "",
+      category: category || "",
+      isBestSeller: Boolean(isBestSeller),
+      isNewArrival: Boolean(isNewArrival),
+      isLimitedEdition: Boolean(isLimitedEdition)
     });
 
     res.status(201).json({

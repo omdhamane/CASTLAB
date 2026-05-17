@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
 </head>
 
 <body>
@@ -40,12 +42,21 @@
 
       <!-- Section Title -->
       <h2 class="shop-title">The Collection</h2>
+      <p class="shop-category-label" id="shopCategoryLabel"></p>
+
+      <nav class="category-filters" aria-label="Collections">
+        <a href="shop.html?category=jdm-legends">JDM</a>
+        <a href="shop.html?category=motorsport">Motorsport</a>
+        <a href="shop.html?category=hypercars">Hypercars</a>
+        <a href="shop.html?category=muscle-cars">Muscle</a>
+        <a href="shop.html?category=suvs">SUVs</a>
+      </nav>
 
       <!-- FILTERS -->
       <section class="filters">
-        <button class="filter-btn active" data-scale="1:64">1:64</button>
-        <button class="filter-btn" data-scale="1:32">1:32</button>
-        <button class="filter-btn" data-scale="1:18">1:18</button>
+        <button class="filter-btn active btn-ripple" data-scale="1:64" type="button">1:64</button>
+        <button class="filter-btn btn-ripple" data-scale="1:32" type="button">1:32</button>
+        <button class="filter-btn btn-ripple" data-scale="1:18" type="button">1:18</button>
       </section>
 
       <!-- PRODUCTS -->
@@ -62,6 +73,7 @@
   <script src="js/shop.js"></script>
   <script src="js/wishlist-utils.js"></script>
   <script src="js/navbar.js"></script>
+  <script src="js/animations.js"></script>
   <script src="js/transition.js"></script>
 
 </body>

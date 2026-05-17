@@ -154,6 +154,95 @@ body::before {
 }
 
 /* ======================================================
+   COLLECTION CATEGORIES (LEVEL 1)
+   ====================================================== */
+
+.collections {
+  padding: 6rem 6%;
+}
+
+.collections h2,
+.section-lead {
+  text-align: center;
+}
+
+.section-lead {
+  margin: -1.5rem auto 3rem;
+  max-width: 520px;
+  opacity: 0.75;
+  font-size: 0.95rem;
+}
+
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.collection-tile {
+  min-height: 160px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.collection-tile:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 77, 77, 0.4);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5);
+}
+
+.collection-icon {
+  font-size: 1.75rem;
+}
+
+.collection-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.cat-jdm {
+  background: linear-gradient(145deg, rgba(255, 60, 60, 0.25), rgba(20, 20, 30, 0.95));
+}
+
+.cat-motorsport {
+  background: linear-gradient(145deg, rgba(60, 120, 255, 0.3), rgba(15, 15, 25, 0.95));
+}
+
+.cat-hyper {
+  background: linear-gradient(145deg, rgba(255, 200, 60, 0.22), rgba(25, 20, 10, 0.95));
+}
+
+.cat-muscle {
+  background: linear-gradient(145deg, rgba(255, 100, 40, 0.28), rgba(30, 15, 10, 0.95));
+}
+
+.cat-suv {
+  background: linear-gradient(145deg, rgba(120, 200, 120, 0.2), rgba(15, 25, 15, 0.95));
+}
+
+.pedestal-alt {
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pedestal-loading,
+.pedestal-empty {
+  opacity: 0.6;
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+/* ======================================================
    GARAGE CATEGORIES (HOME PAGE)
    ====================================================== */
 
@@ -315,6 +404,39 @@ body::before {
 
 .shop-container {
   padding: 5rem 6%;
+}
+
+.shop-category-label {
+  text-align: center;
+  font-size: 0.95rem;
+  opacity: 0.7;
+  margin: -1rem 0 1.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.category-filters a {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.category-filters a:hover,
+.category-filters a.active {
+  background: rgba(255, 77, 77, 0.2);
+  border-color: rgba(255, 77, 77, 0.5);
 }
 
 .shop-title {

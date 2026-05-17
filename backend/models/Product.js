@@ -1,5 +1,13 @@
 const mongoose = require("mongoose");
 
+const CATEGORIES = [
+  "jdm-legends",
+  "motorsport",
+  "hypercars",
+  "muscle-cars",
+  "suvs"
+];
+
 const productSchema = new mongoose.Schema(
   {
     name: {
@@ -16,6 +24,11 @@ const productSchema = new mongoose.Schema(
       enum: ["1:64", "1:32", "1:18"],
       required: true
     },
+    category: {
+      type: String,
+      enum: [...CATEGORIES, ""],
+      default: ""
+    },
     price: {
       type: Number,
       required: true
@@ -31,9 +44,23 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       default: ""
+    },
+    isBestSeller: {
+      type: Boolean,
+      default: false
+    },
+    isNewArrival: {
+      type: Boolean,
+      default: false
+    },
+    isLimitedEdition: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }
 );
+
+productSchema.statics.CATEGORIES = CATEGORIES;
 
 module.exports = mongoose.model("Product", productSchema);

@@ -2,136 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>CASTLAB</title>
+  <title>CASTLAB | Precision in Miniature</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: "Inter", sans-serif;
-      background: #000;
-      overflow: hidden;
-      color: white;
-    }
-
-    /* ================= PAGE TRANSITION ================= */
-
-    .page-transition {
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.6s ease;
-    }
-
-    .page-transition.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ================= HERO SECTION ================= */
-
-    .hero {
-      position: relative;
-      height: 100vh;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .hero-video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 110%;
-      height: 110%;
-      object-fit: cover;
-      transform: translate(-50%, -50%) scale(1);
-      animation: slowZoom 25s ease-in-out infinite alternate;
-      z-index: 1;
-    }
-
-    @keyframes slowZoom {
-      from { transform: translate(-50%, -50%) scale(1); }
-      to   { transform: translate(-50%, -50%) scale(1.1); }
-    }
-
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        rgba(0,0,0,0.6),
-        rgba(0,0,0,0.85)
-      );
-      z-index: 2;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 3;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      animation: fadeIn 1.5s ease forwards;
-      padding: 0 20px;
-    }
-
-    .hero-title {
-      font-size: clamp(3rem, 7vw, 6rem);
-      font-weight: 800;
-      letter-spacing: 4px;
-    }
-
-    .hero-subtitle {
-      margin-top: 1.2rem;
-      font-size: 1.2rem;
-      opacity: 0.75;
-      max-width: 600px;
-      line-height: 1.6;
-    }
-
-    .hero-btn {
-      margin-top: 3rem;
-      padding: 16px 34px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .hero-btn:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(255, 77, 77, 0.4);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 768px) {
-      .hero-title { letter-spacing: 2px; }
-      .hero-subtitle { font-size: 1rem; }
-    }
-  </style>
+  <link rel="stylesheet" href="css/intro.css" />
+  <link rel="stylesheet" href="css/animations.css" />
 </head>
-
 <body>
 
   <div class="page-transition">
 
-    <div class="hero">
+    <section class="hero" id="top">
 
-      <video 
+      <video
         class="hero-video"
         autoplay
         muted
@@ -144,24 +26,44 @@
       <div class="hero-overlay"></div>
 
       <div class="hero-content">
-        <div class="hero-title">CASTLAB</div>
-        <div class="hero-subtitle">
-          Precision in Miniature.  
-          Discover premium diecast models across scales and legends.
+        <div class="logo-reveal">
+          <h1 class="hero-title">CASTLAB</h1>
         </div>
+        <p class="hero-tagline">Precision in Miniature.</p>
+        <p class="hero-subtitle">
+          Premium diecast models — curated scales, legendary castings, collector-grade presentation.
+        </p>
 
-        <!-- IMPORTANT: Use anchor instead of manual fade -->
-        <a href="shop.html" class="hero-btn">
-          Enter Garage →
-        </a>
+        <div class="hero-actions">
+          <a href="shop.html" class="hero-btn btn-ripple">Enter Garage →</a>
+          <a href="#explore" class="hero-btn outline btn-ripple">Explore Collections</a>
+        </div>
       </div>
 
-    </div>
+      <a href="#explore" class="scroll-indicator" aria-label="Scroll to explore">
+        <span>Scroll</span>
+        <span class="chevron" aria-hidden="true"></span>
+      </a>
+
+    </section>
+
+    <section class="intro-preview" id="explore">
+      <h2>Explore by Collection</h2>
+      <div class="intro-preview-grid">
+        <a href="shop.html?category=jdm-legends" class="preview-pill">JDM Legends</a>
+        <a href="shop.html?category=motorsport" class="preview-pill">Motorsport</a>
+        <a href="shop.html?category=hypercars" class="preview-pill">Hypercars</a>
+        <a href="shop.html?category=muscle-cars" class="preview-pill">Muscle Cars</a>
+        <a href="shop.html?category=suvs" class="preview-pill">SUVs</a>
+      </div>
+      <div class="intro-preview-cta">
+        <a href="index.html" class="hero-btn btn-ripple">View Full Showroom</a>
+      </div>
+    </section>
 
   </div>
 
-  <!-- Scripts -->
   <script src="js/transition.js"></script>
-
+  <script src="js/animations.js"></script>
 </body>
 </html>

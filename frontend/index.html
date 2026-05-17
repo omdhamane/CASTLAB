@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/animations.css">
 </head>
 
 <body>
@@ -59,7 +60,7 @@
       From rare finds to mainline classics, discover the world of premium die-cast.
     </p>
 
-    <a href="shop.html" class="btn solid">
+    <a href="shop.html" class="btn solid btn-ripple">
       Shop Latest Arrivals
     </a>
   </div>
@@ -74,33 +75,68 @@
   <div class="trust-item">🧪 Collector-Owned</div>
 </section>
 
-<!-- ================= GARAGE CATEGORIES ================= -->
+<!-- ================= COLLECTION CATEGORIES ================= -->
 
-<section class="garage">
+<section class="collections">
 
-  <h2>The Garage</h2>
+  <h2>Shop by Collection</h2>
+  <p class="section-lead">Curated diecast lines — tap a category to browse the garage.</p>
 
-  <div class="garage-grid">
-    <a href="shop.html?scale=1:64" class="garage-tile scale-1-64">
-    1:64
+  <div class="collections-grid">
+    <a href="shop.html?category=jdm-legends" class="collection-tile cat-jdm">
+      <span class="collection-icon">🚗</span>
+      <span class="collection-name">JDM Legends</span>
     </a>
-
-    <a href="shop.html?scale=1:43" class="garage-tile scale-1-43">
-      1:43
-      </a>
-
-    <a href="shop.html?scale=1:18" class="garage-tile scale-1-18">
-    1:18
+    <a href="shop.html?category=motorsport" class="collection-tile cat-motorsport">
+      <span class="collection-icon">🏁</span>
+      <span class="collection-name">Motorsport Collection</span>
     </a>
-
-
-    <a href="shop.html?category=accessories" class="garage-tile accessories">
-      Protectors & Displays
+    <a href="shop.html?category=hypercars" class="collection-tile cat-hyper">
+      <span class="collection-icon">⚡</span>
+      <span class="collection-name">Hypercars</span>
+    </a>
+    <a href="shop.html?category=muscle-cars" class="collection-tile cat-muscle">
+      <span class="collection-icon">🔥</span>
+      <span class="collection-name">Muscle Cars</span>
+    </a>
+    <a href="shop.html?category=suvs" class="collection-tile cat-suv">
+      <span class="collection-icon">🛻</span>
+      <span class="collection-name">SUVs</span>
     </a>
   </div>
 
 </section>
 
+<!-- ================= SCALE GARAGE ================= -->
+
+<section class="garage">
+
+  <h2>Shop by Scale</h2>
+
+  <div class="garage-grid">
+    <a href="shop.html?scale=1:64" class="garage-tile scale-1-64">1:64</a>
+    <a href="shop.html?scale=1:43" class="garage-tile scale-1-43">1:43</a>
+    <a href="shop.html?scale=1:18" class="garage-tile scale-1-18">1:18</a>
+  </div>
+
+</section>
+
+<!-- ================= FEATURED SLIDERS ================= -->
+
+<section class="pedestal">
+  <h2>Best Sellers</h2>
+  <div class="pedestal-row" id="bestSellersRow"></div>
+</section>
+
+<section class="pedestal pedestal-alt">
+  <h2>New Arrivals</h2>
+  <div class="pedestal-row" id="newArrivalsRow"></div>
+</section>
+
+<section class="pedestal">
+  <h2>Limited Editions</h2>
+  <div class="pedestal-row" id="limitedEditionsRow"></div>
+</section>
 
 <!-- ================= THE LAB JOURNAL ================= -->
 
@@ -137,7 +173,7 @@
 
   <form class="newsletter">
     <input type="email" placeholder="Enter your email">
-    <button class="btn solid">Subscribe</button>
+    <button type="button" class="btn solid btn-ripple">Subscribe</button>
   </form>
 </section>
 
@@ -148,6 +184,8 @@
 </footer>
 
 <script src="js/home-search.js"></script>
+<script src="js/home.js"></script>
+<script src="js/animations.js"></script>
 <script src="js/navbar.js"></script>
 
 </body>
