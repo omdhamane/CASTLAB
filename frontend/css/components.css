@@ -107,21 +107,70 @@ input:focus {
   aspect-ratio: 1 / 1;
   background: #ffffff;
   border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-bottom: 10px;
   overflow: hidden;
-  position: relative; /* anchors .like-btn */
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  place-items: center;
 }
 
-.product-stage img,
-.product-image img {
+.product-stage > img,
+.product-image > img {
+  grid-column: 1;
+  grid-row: 1;
   width: 88%;
   height: 88%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center;
   filter: none;
+  z-index: 1;
+}
+
+/* Wishlist — top-right of image stage */
+.product-stage .like-btn,
+.product-image .like-btn {
+  grid-column: 1;
+  grid-row: 1;
+  place-self: start end;
+  position: relative;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  margin: 10px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 1;
+  transform: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.product-stage .like-btn:hover,
+.product-image .like-btn:hover {
+  background: rgba(255, 77, 77, 0.9);
+  transform: scale(1.08);
+}
+
+.product-stage .like-btn.active,
+.product-image .like-btn.active {
+  background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
+  border: none;
 }
 
 .pedestal-stage {
