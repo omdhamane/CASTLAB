@@ -111,3 +111,57 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: "Server error during login" });
   }
 };
+
+// GET USER PROFILE
+exports.getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error("Get profile error:", error.message);
+    res.status(500).json({ message: "Server error fetching profile" });
+  }
+};
+
+// UPDATE USER PROFILE
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const { name, phone, address, city, state, zipCode, country } = req.body;
+    const user = await User.findById(req.user);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.name = name || user.name;
+    user.phone = phone || user.phone;
+    user.address = address || user.address;
+    user.city = city || user.city;
+    user.state = state || user.state;
+    user.zipCode = zipCode || user.zipCode;
+    user.country = country || user.country;
+
+    const updatedUser = await user.save();
+
+    res.json({
+      message: "Profile updated successfully",
+      user: {
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        address: updatedUser.address,
+        city: updatedUser.city,
+        state: updatedUser.state,
+        zipCode: updatedUser.zipCode,
+        country: updatedUser.country
+      }
+    });
+  } catch (error) {
+    console.error("Update profile error:", error.message);
+    res.status(500).json({ message: "Server error updating profile" });
+  }
+};

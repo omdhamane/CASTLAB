@@ -25,6 +25,17 @@ const orderSchema = new mongoose.Schema(
     invoicePath: {
       type: String,
       default: ""
+    },
+    shippingAddress: {
+      address: { type: String, default: "" },
+      city: { type: String, default: "" },
+      state: { type: String, default: "" },
+      zipCode: { type: String, default: "" },
+      country: { type: String, default: "" }
+    },
+    contactNumber: {
+      type: String,
+      default: ""
     }
   },
   { timestamps: true }

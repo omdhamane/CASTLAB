@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cart | CASTLAB</title>
+  <title>Account | CASTLAB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Styles -->
@@ -29,7 +29,7 @@
         <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
         <a href="wishlist.html" id="wishlistNavLink">Wishlist</a>
-        <a href="cart.html" class="active cart-nav-link" id="cartNavLink">Cart</a>
+        <a href="cart.html" class="cart-nav-link" id="cartNavLink">Cart</a>
         <a href="orders.html" id="ordersNavLink" class="hidden">Orders</a>
         <div class="nav-auth-slot">
           <div class="user-menu hidden" id="userMenu">
@@ -43,7 +43,7 @@
                 <strong id="userDropdownName">—</strong>
                 <span id="userDropdownEmail">—</span>
               </div>
-              <a href="account.html">My Profile</a>
+              <a href="account.html" class="active">My Profile</a>
               <a href="orders.html">My Orders</a>
               <a href="shop.html">Shop</a>
               <button type="button" id="logoutBtn">Sign out</button>
@@ -54,69 +54,73 @@
       </nav>
     </header>
 
-    <!-- ================= CART PAGE ================= -->
-    <main class="cart-container">
-      <h2>Your Cart</h2>
-
-      <div id="cartItems"></div>
-
-      <div class="cart-summary">
-        <strong>Total: ₹<span id="cartTotal">0</span></strong>
-        <button id="checkoutBtn" class="checkout-btn">
-          Proceed to Checkout
-        </button>
-      </div>
-    </main>
-
-    <!-- ================= CHECKOUT MODAL ================= -->
-    <div id="checkoutModal" class="modal hidden">
-      <div class="modal-content auth-card" style="max-width: 500px; margin: 5rem auto; position: relative;">
-        <button id="closeModalBtn" class="remove-btn" style="position: absolute; top: 1rem; right: 1rem; background: transparent;">✕</button>
+    <!-- ================= ACCOUNT PAGE ================= -->
+    <main class="login-page" style="align-items: flex-start; padding-top: 4rem;">
+      <div class="auth-card" style="max-width: 600px; width: 100%;">
         <div class="auth-header">
-          <h2>Confirm Details</h2>
-          <p>Please confirm your shipping address and contact info.</p>
+          <h2>My Profile</h2>
+          <p>Manage your account details and shipping address.</p>
         </div>
-        <form id="checkoutForm" class="auth-form">
+
+        <form id="profileForm" class="auth-form">
+          <div id="profileError" class="auth-error hidden"></div>
+          <div id="profileSuccess" class="auth-error hidden" style="background: rgba(46, 213, 115, 0.1); color: #2ed573; border-color: rgba(46, 213, 115, 0.2);"></div>
+
           <div class="form-group">
-            <label>Phone Number</label>
-            <input type="tel" id="chkPhone" required />
+            <label for="name">Full Name</label>
+            <input type="text" id="name" required />
           </div>
+
           <div class="form-group">
-            <label>Street Address</label>
-            <input type="text" id="chkAddress" required />
+            <label for="email">Email Address</label>
+            <input type="email" id="email" readonly style="opacity: 0.7; cursor: not-allowed;" />
           </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+1 234 567 8900" />
+          </div>
+          
+          <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; font-size: 1.1rem;">Shipping Address</h3>
+
+          <div class="form-group">
+            <label for="address">Street Address</label>
+            <input type="text" id="address" placeholder="123 Main St, Apt 4B" />
+          </div>
+
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div class="form-group">
-              <label>City</label>
-              <input type="text" id="chkCity" required />
+              <label for="city">City</label>
+              <input type="text" id="city" />
             </div>
             <div class="form-group">
-              <label>State</label>
-              <input type="text" id="chkState" required />
+              <label for="state">State / Province</label>
+              <input type="text" id="state" />
             </div>
           </div>
+
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div class="form-group">
-              <label>ZIP Code</label>
-              <input type="text" id="chkZip" required />
+              <label for="zipCode">ZIP / Postal Code</label>
+              <input type="text" id="zipCode" />
             </div>
             <div class="form-group">
-              <label>Country</label>
-              <input type="text" id="chkCountry" required />
+              <label for="country">Country</label>
+              <input type="text" id="country" />
             </div>
           </div>
-          <button type="submit" class="btn solid btn-ripple" id="confirmOrderBtn">Place Order</button>
+
+          <button type="submit" class="btn solid btn-ripple" id="saveProfileBtn">Save Profile</button>
         </form>
       </div>
-    </div>
+    </main>
 
   </div>
 
   <!-- ================= SCRIPTS ================= -->
-
   <script src="js/config.js"></script>
   <script src="js/store.js"></script>
-  <script src="js/cart.js"></script>
+  <script src="js/account.js"></script>
   <script src="js/navbar.js"></script>
   <script src="js/transition.js"></script>
 

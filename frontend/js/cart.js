@@ -89,11 +89,54 @@ async function checkout() {
     return;
   }
 
+  // Show Modal
+  const modal = document.getElementById("checkoutModal");
+  if (modal) {
+    modal.classList.remove("hidden");
+    
+    // Fetch profile to prefill
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const user = await res.json();
+        document.getElementById("chkPhone").value = user.phone || "";
+        document.getElementById("chkAddress").value = user.address || "";
+        document.getElementById("chkCity").value = user.city || "";
+        document.getElementById("chkState").value = user.state || "";
+        document.getElementById("chkZip").value = user.zipCode || "";
+        document.getElementById("chkCountry").value = user.country || "";
+      }
+    } catch (e) {
+      console.error("Failed to load profile for checkout");
+    }
+  }
+}
+
+async function submitOrder(e) {
+  e.preventDefault();
+  
+  const token = localStorage.getItem("token");
+  const cart = getCart();
+  const btn = document.getElementById("confirmOrderBtn");
+  
+  btn.disabled = true;
+  btn.textContent = "Processing...";
+
   const orderData = {
     items: cart.map((item) => ({
       productId: item.productId,
       quantity: Number(item.quantity)
-    }))
+    })),
+    contactNumber: document.getElementById("chkPhone").value,
+    shippingAddress: {
+      address: document.getElementById("chkAddress").value,
+      city: document.getElementById("chkCity").value,
+      state: document.getElementById("chkState").value,
+      zipCode: document.getElementById("chkZip").value,
+      country: document.getElementById("chkCountry").value,
+    }
   };
 
   try {
@@ -123,8 +166,18 @@ async function checkout() {
   } catch (err) {
     console.error("Checkout error:", err);
     alert("Checkout failed");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Place Order";
+    document.getElementById("checkoutModal")?.classList.add("hidden");
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadCart);
-document.getElementById("checkoutBtn")?.addEventListener("click", checkout);
+document.addEventListener("DOMContentLoaded", () => {
+  loadCart();
+  document.getElementById("checkoutBtn")?.addEventListener("click", checkout);
+  document.getElementById("closeModalBtn")?.addEventListener("click", () => {
+    document.getElementById("checkoutModal")?.classList.add("hidden");
+  });
+  document.getElementById("checkoutForm")?.addEventListener("submit", submitOrder);
+});

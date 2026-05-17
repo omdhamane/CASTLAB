@@ -4,7 +4,7 @@ const generateInvoice = require("../utils/invoiceGenerator");
 
 exports.createOrder = async (req, res) => {
   try {
-    const { items } = req.body;
+    const { items, shippingAddress, contactNumber } = req.body;
 
     // ✅ Validate items exist
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -69,7 +69,9 @@ exports.createOrder = async (req, res) => {
     const order = await Order.create({
       user: req.user,
       items: populatedItems,
-      totalAmount
+      totalAmount,
+      shippingAddress: shippingAddress || {},
+      contactNumber: contactNumber || ""
     });
 
     // ✅ Update stock

@@ -220,7 +220,7 @@ body.page-home {
 
 @media (max-width: 768px) {
   body.page-home {
-    --home-nav-height: 8.5rem;
+    --home-nav-height: 9.5rem;
   }
 }
 
@@ -429,8 +429,17 @@ body.page-home {
 
 .navbar .nav-auth-slot {
   margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .navbar .user-menu-dropdown {
   right: 0;
 }
+
+/* Hover support for desktop */
+@media (min-width: 769px) {
+  .user-menu:hover .user-menu-dropdown {
+    display: block !important;
+  }
+}
