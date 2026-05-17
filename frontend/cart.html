@@ -72,10 +72,22 @@
     <div id="checkoutModal" class="modal hidden">
       <div class="modal-content auth-card" style="max-width: 500px; margin: 5rem auto; position: relative;">
         <button id="closeModalBtn" class="remove-btn" style="position: absolute; top: 1rem; right: 1rem; background: transparent;">✕</button>
-        <div class="auth-header">
+        <div class="auth-header" style="margin-bottom: 1rem;">
           <h2>Confirm Details</h2>
-          <p>Please confirm your shipping address and contact info.</p>
+          <p>Review your order summary and shipping information.</p>
         </div>
+
+        <div id="checkoutSummary" class="checkout-summary" style="background: rgba(255, 255, 255, 0.03); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+          <h3 style="font-size: 1rem; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 0.5rem;">Order Summary</h3>
+          <div id="checkoutItemsList" style="font-size: 0.9rem; color: #bbb; max-height: 150px; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <!-- Items injected by JS -->
+          </div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 0.75rem; font-size: 1.1rem; color: #fff;">
+            <span>Total:</span>
+            <span id="checkoutTotalAmount">₹0.00</span>
+          </div>
+        </div>
+
         <form id="checkoutForm" class="auth-form">
           <div class="form-group">
             <label>Phone Number</label>

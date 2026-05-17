@@ -111,6 +111,37 @@ async function checkout() {
     } catch (e) {
       console.error("Failed to load profile for checkout");
     }
+
+    // Populate Order Summary
+    const summaryList = document.getElementById("checkoutItemsList");
+    const summaryTotal = document.getElementById("checkoutTotalAmount");
+    if (summaryList && summaryTotal) {
+      summaryList.innerHTML = "<span>Loading order summary...</span>";
+      let total = 0;
+      let summaryHTML = "";
+      
+      for (const item of cart) {
+        try {
+          const res = await fetch(`${API_BASE}/api/products/${item.productId}`);
+          if (res.ok) {
+            const product = await res.json();
+            const itemTotal = Number(product.price) * Number(item.quantity);
+            total += itemTotal;
+            summaryHTML += `
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                <span style="flex: 1;">${item.quantity} × ${product.name}</span>
+                <span style="white-space: nowrap;">₹${itemTotal.toFixed(2)}</span>
+              </div>
+            `;
+          }
+        } catch (e) {
+          console.error("Failed to load product for summary:", e);
+        }
+      }
+      
+      summaryList.innerHTML = summaryHTML || "<span>Failed to load summary details.</span>";
+      summaryTotal.textContent = `₹${total.toFixed(2)}`;
+    }
   }
 }
 
