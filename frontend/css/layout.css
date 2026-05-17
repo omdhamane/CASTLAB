@@ -73,6 +73,11 @@ header a:hover {
 
 /* NAV LINKS */
 
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
 .nav-right a {
   margin-left: 1.8rem;
   text-decoration: none;
