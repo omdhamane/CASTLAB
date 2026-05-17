@@ -128,9 +128,9 @@ async function checkout() {
             const itemTotal = Number(product.price) * Number(item.quantity);
             total += itemTotal;
             summaryHTML += `
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
-                <span style="flex: 1;">${item.quantity} × ${product.name}</span>
-                <span style="white-space: nowrap;">₹${itemTotal.toFixed(2)}</span>
+              <div class="summary-item">
+                <span class="summary-item-name" title="${item.quantity} × ${product.name}">${item.quantity} × ${product.name}</span>
+                <span class="summary-item-price">₹${itemTotal.toFixed(2)}</span>
               </div>
             `;
           }
