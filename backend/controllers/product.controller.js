@@ -165,3 +165,77 @@ exports.searchProducts = async (req, res) => {
     res.status(500).json({ message: "Search failed" });
   }
 };
+
+exports.updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const fields = [
+      "name",
+      "brand",
+      "scale",
+      "price",
+      "image",
+      "stock",
+      "description",
+      "category",
+      "isBestSeller",
+      "isNewArrival",
+      "isLimitedEdition"
+    ];
+
+    fields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        if (field === "isBestSeller" || field === "isNewArrival" || field === "isLimitedEdition") {
+          product[field] = Boolean(req.body[field]);
+        } else if (field === "stock" || field === "price") {
+          product[field] = Number(req.body[field]);
+        } else {
+          product[field] = req.body[field];
+        }
+      }
+    });
+
+    if (req.body.scale && !VALID_SCALES.includes(req.body.scale)) {
+      return res.status(400).json({ message: "Invalid scale" });
+    }
+
+    if (req.body.category && !VALID_CATEGORIES.includes(req.body.category) && req.body.category !== "") {
+      return res.status(400).json({ message: "Invalid category" });
+    }
+
+    await product.save();
+
+    res.json({ message: "Product updated", product });
+  } catch (error) {
+    console.error("Update product error:", error.message);
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
+
+    const product = await Product.findByIdAndDelete(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.json({ message: "Product deleted" });
+  } catch (error) {
+    console.error("Delete product error:", error.message);
+    res.status(500).json({ message: "Failed to delete product" });
+  }
+};

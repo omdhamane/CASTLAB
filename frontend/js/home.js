@@ -1,4 +1,3 @@
-const API_BASE = "https://castlab-i3hm.onrender.com";
 const FALLBACK_IMAGE = "https://via.placeholder.com/400x400?text=CASTLAB";
 
 const FEATURED_SECTIONS = [

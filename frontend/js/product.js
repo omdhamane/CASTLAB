@@ -1,49 +1,25 @@
-const API_BASE = "https://castlab-i3hm.onrender.com";
 const FALLBACK_IMAGE = "https://via.placeholder.com/400x250?text=CASTLAB";
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
 const container = document.getElementById("productDetail");
 
-/* ---------- WISHLIST HELPERS ---------- */
-function getWishlist() {
-  return JSON.parse(localStorage.getItem("wishlist")) || [];
-}
-
-function saveWishlist(wishlist) {
-  localStorage.setItem("wishlist", JSON.stringify(wishlist));
-}
-
 function isInWishlist(id) {
-  return getWishlist().some(item => item.id === id);
+  return getWishlist().some((item) => item.id === id);
 }
 
 function toggleWishlist(product) {
   let wishlist = getWishlist();
-  const exists = wishlist.some(item => item.id === product.id);
+  const exists = wishlist.some((item) => item.id === product.id);
 
   if (exists) {
-    wishlist = wishlist.filter(item => item.id !== product.id);
+    wishlist = wishlist.filter((item) => item.id !== product.id);
   } else {
     wishlist.push(product);
   }
 
   saveWishlist(wishlist);
   return !exists;
-}
-
-/* ---------- CART HELPER ---------- */
-function addToCart(productId) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const existing = cart.find(i => i.productId === productId);
-
-  if (existing) {
-    existing.quantity += 1;
-  } else {
-    cart.push({ productId, quantity: 1 });
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 /* ---------- LOAD PRODUCT ---------- */
@@ -75,9 +51,10 @@ async function loadProduct() {
         : [FALLBACK_IMAGE];
 
     const inWishlist = isInWishlist(product._id);
+    const oos = isOutOfStock(product);
 
     container.innerHTML = `
-      <div class="product-detail">
+      <div class="product-detail${oos ? " out-of-stock" : ""}">
 
         <!-- LEFT: Image -->
         <div class="product-detail-image">
@@ -117,10 +94,9 @@ async function loadProduct() {
             <button 
               id="addToCartBtn" 
               class="primary-btn"
-              ${product.stock === 0 ? "disabled" : ""}
-              style="${product.stock === 0 ? "opacity:0.5;cursor:not-allowed;" : ""}"
+              ${oos ? "disabled" : ""}
             >
-              ${product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+              ${oos ? "Out of Stock" : "Add to Cart"}
             </button>
           </div>
 
@@ -153,11 +129,10 @@ async function loadProduct() {
 
     /* ---------- ADD TO CART ---------- */
     const cartBtn = document.getElementById("addToCartBtn");
-    if (cartBtn && product.stock > 0) {
+    if (cartBtn && !oos) {
       cartBtn.addEventListener("click", () => {
-        addToCart(product._id);
+        addToCartById(product._id);
 
-        // ✅ Visual feedback
         cartBtn.textContent = "✅ Added!";
         cartBtn.style.background = "linear-gradient(135deg, #22c55e, #16a34a)";
 

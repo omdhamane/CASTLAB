@@ -1,1 +1,1 @@
-const BASE_URL = "https://castlab-i3hm.onrender.com";
+const API_BASE = "https://castlab-i3hm.onrender.com";

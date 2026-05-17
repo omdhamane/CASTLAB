@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | CASTLAB</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="index.html" class="logo-link"><span class="castlab-logo">CASTLAB</span></a>
+    </div>
+    <nav class="nav-right">
+      <a href="shop.html">Shop</a>
+      <a href="admin.html" class="active">Admin</a>
+    </nav>
+  </header>
+
+  <main class="admin-page">
+    <section id="adminGate" class="admin-gate glass-card">
+      <h1>Admin Access</h1>
+      <p>Enter your admin key to manage products.</p>
+      <input type="password" id="adminKeyInput" placeholder="Admin key" />
+      <button type="button" id="adminUnlock" class="btn solid">Unlock</button>
+      <p class="admin-hint">Default key (change on server): <code>castlab-admin</code></p>
+    </section>
+
+    <section id="adminPanel" class="admin-panel hidden">
+      <div class="admin-panel-head">
+        <h1>Product Manager</h1>
+        <button type="button" id="adminLogout" class="btn outline">Lock</button>
+      </div>
+
+      <form id="productForm" class="admin-form glass-card">
+        <h2 id="formTitle">Add Product</h2>
+        <input type="hidden" id="editId" />
+
+        <div class="form-grid">
+          <input type="text" id="name" placeholder="Product name" required />
+          <input type="text" id="brand" placeholder="Brand" required />
+          <select id="scale" required>
+            <option value="1:64">1:64</option>
+            <option value="1:32">1:32</option>
+            <option value="1:18">1:18</option>
+          </select>
+          <input type="number" id="price" placeholder="Price (₹)" min="1" required />
+          <input type="number" id="stock" placeholder="Stock qty" min="0" value="10" required />
+          <select id="category">
+            <option value="">No category</option>
+            <option value="jdm-legends">JDM Legends</option>
+            <option value="motorsport">Motorsport</option>
+            <option value="hypercars">Hypercars</option>
+            <option value="muscle-cars">Muscle Cars</option>
+            <option value="suvs">SUVs</option>
+          </select>
+        </div>
+
+        <textarea id="description" placeholder="Description" rows="3"></textarea>
+
+        <label class="file-label">Image URL</label>
+        <input type="url" id="image" placeholder="https://... or upload below" />
+
+        <label class="file-label">Upload image (max 3MB)</label>
+        <input type="file" id="imageFile" accept="image/*" />
+        <img id="imagePreview" class="admin-preview hidden" alt="Preview" />
+
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="isBestSeller" /> Best Seller</label>
+          <label><input type="checkbox" id="isNewArrival" /> New Arrival</label>
+          <label><input type="checkbox" id="isLimitedEdition" /> Limited Edition</label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn solid">Save Product</button>
+          <button type="button" id="resetForm" class="btn outline">Clear Form</button>
+        </div>
+      </form>
+
+      <section class="admin-list-section">
+        <h2>All Products</h2>
+        <div id="adminProductList" class="admin-product-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

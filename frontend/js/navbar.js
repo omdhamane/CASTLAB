@@ -1,48 +1,18 @@
-/* ================= NAVBAR CART BADGE ================= */
-
-function updateCartBadge() {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  // ✅ Total quantity of all items
-  const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  const badge = document.getElementById("cartBadge");
-  if (!badge) return;
-
-  if (totalQty === 0) {
-    badge.classList.add("hidden");
-  } else {
-    badge.classList.remove("hidden");
-    badge.textContent = totalQty;
-
-    // ✅ Bump animation
-    badge.classList.remove("bump");
-    void badge.offsetWidth; // force reflow
-    badge.classList.add("bump");
-  }
-}
-
-/* ================= ACTIVE NAV LINK ================= */
+/* Navbar — uses store.js for cart/wishlist/auth */
 
 function setActiveNavLink() {
-  const currentPage = window.location.pathname.split("/").pop();
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-  document.querySelectorAll(".nav-right a").forEach(link => {
+  document.querySelectorAll(".nav-right a").forEach((link) => {
     link.classList.remove("active");
-
     const href = link.getAttribute("href");
-    if (href === currentPage) {
+    if (href && href.split("?")[0] === currentPage) {
       link.classList.add("active");
     }
   });
 }
 
-/* ================= INIT ================= */
-
 document.addEventListener("DOMContentLoaded", () => {
-  updateCartBadge();
+  if (typeof initNavBadges === "function") initNavBadges();
   setActiveNavLink();
 });
-
-// ✅ Listen for cart changes across tabs
-window.addEventListener("storage", updateCartBadge);

@@ -1223,3 +1223,255 @@ body::before {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ======================================================
+   LEVEL 2 — OUT OF STOCK
+   ====================================================== */
+
+.product-card.out-of-stock,
+.cart-item.out-of-stock {
+  opacity: 0.55;
+  filter: grayscale(0.85);
+}
+
+.product-card.out-of-stock .add-btn {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.stock-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.primary-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ======================================================
+   LEVEL 2 — WISHLIST TOOLBAR
+   ====================================================== */
+
+.wishlist-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+/* ======================================================
+   LEVEL 2 — ORDERS PAGE
+   ====================================================== */
+
+.orders-page {
+  padding: 5rem 6% 4rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-card {
+  padding: 1.25rem 1.5rem;
+}
+
+.order-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.order-card-head h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.order-meta {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.order-total {
+  font-size: 1.25rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.order-card-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.orders-empty {
+  text-align: center;
+  opacity: 0.7;
+  padding: 2rem;
+}
+
+/* ======================================================
+   LEVEL 2 — ADMIN PANEL
+   ====================================================== */
+
+.admin-page {
+  padding: 6rem 5% 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.admin-gate {
+  max-width: 420px;
+  margin: 2rem auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.admin-gate input {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+.admin-hint {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.admin-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.admin-form {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.admin-form textarea {
+  margin: 0.75rem 0;
+  resize: vertical;
+}
+
+.file-label {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.admin-preview {
+  max-width: 200px;
+  max-height: 200px;
+  margin-top: 0.75rem;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn.danger {
+  background: #b91c1c;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.admin-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-product-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.admin-product-row img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.admin-product-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.admin-product-btns {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}

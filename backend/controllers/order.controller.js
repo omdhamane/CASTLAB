@@ -39,12 +39,10 @@ exports.createOrder = async (req, res) => {
 
       console.log(`✅ Product found: ${product.name}, Stock: ${product.stock}`);
 
-      // ✅ FIXED: Skip stock check if stock is 0 (allows unlimited orders)
-      // If you want stock check, uncomment below
-      // if (product.stock < item.quantity) {
-      //   errors.push(`Insufficient stock for ${product.name}`);
-      //   continue;
-      // }
+      if (product.stock < item.quantity) {
+        errors.push(`Insufficient stock for ${product.name} (only ${product.stock} left)`);
+        continue;
+      }
 
       totalAmount += product.price * item.quantity;
 
@@ -68,7 +66,6 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: "No valid items in order" });
     }
 
-    // ✅ Create order
     const order = await Order.create({
       user: req.user,
       items: populatedItems,
@@ -95,12 +92,18 @@ exports.createOrder = async (req, res) => {
       console.error("Invoice generation failed:", invoiceError.message);
     }
 
+    if (invoicePath) {
+      order.invoicePath = invoicePath;
+      await order.save();
+    }
+
     res.status(201).json({
       message: "Order placed successfully ✅",
       order: {
         id: order._id,
         totalAmount: order.totalAmount,
-        status: order.status
+        status: order.status,
+        createdAt: order.createdAt
       },
       invoice: invoicePath
     });
@@ -108,5 +111,51 @@ exports.createOrder = async (req, res) => {
   } catch (error) {
     console.error("Create order error:", error.message);
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getMyOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user })
+      .sort({ createdAt: -1 })
+      .populate("items.product", "name brand scale image");
+
+    res.json({
+      count: orders.length,
+      orders: orders.map((o) => ({
+        id: o._id,
+        totalAmount: o.totalAmount,
+        status: o.status,
+        createdAt: o.createdAt,
+        invoicePath: o.invoicePath || "",
+        items: o.items
+      }))
+    });
+  } catch (error) {
+    console.error("Get orders error:", error.message);
+    res.status(500).json({ message: "Failed to fetch orders" });
+  }
+};
+
+exports.getOrderById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid order ID" });
+    }
+
+    const order = await Order.findOne({ _id: id, user: req.user }).populate(
+      "items.product",
+      "name brand scale image price"
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.error("Get order error:", error.message);
+    res.status(500).json({ message: "Failed to fetch order" });
   }
 };

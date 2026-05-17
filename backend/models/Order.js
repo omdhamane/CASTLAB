@@ -21,6 +21,10 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "Placed"
+    },
+    invoicePath: {
+      type: String,
+      default: ""
     }
   },
   { timestamps: true }

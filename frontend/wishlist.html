@@ -28,18 +28,21 @@
       <nav class="nav-right">
         <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
-        <a href="wishlist.html" class="active">Wishlist</a>
-        <a href="cart.html" class="cart-nav-link">
-          Cart
-          <span class="cart-badge" id="cartBadge">0</span>
-        </a>
-        <a href="login.html">Login</a>
+        <a href="wishlist.html" class="active" id="wishlistNavLink">Wishlist</a>
+        <a href="cart.html" class="cart-nav-link" id="cartNavLink">Cart</a>
+        <a href="orders.html" id="ordersNavLink" class="hidden">Orders</a>
+        <a href="login.html" id="authNavLink">Login</a>
       </nav>
     </header>
 
     <!-- ================= WISHLIST PAGE ================= -->
     <main class="wishlist-page">
       <h2>Your Wishlist</h2>
+
+      <div id="wishlistToolbar" class="wishlist-toolbar" style="display:none">
+        <button type="button" id="moveAllToCart" class="btn solid">Move All to Cart</button>
+        <button type="button" id="removeAllWishlist" class="btn outline">Remove All</button>
+      </div>
 
       <div id="wishlistContainer" class="wishlist-grid">
         <!-- JS Injected -->
@@ -50,6 +53,8 @@
 
   <!-- ================= SCRIPTS ================= -->
 
+  <script src="js/config.js"></script>
+  <script src="js/store.js"></script>
   <script src="js/wishlist.js"></script>
   <script src="js/navbar.js"></script>
   <script src="js/transition.js"></script>

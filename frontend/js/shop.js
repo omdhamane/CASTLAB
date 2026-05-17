@@ -1,4 +1,3 @@
-const API_BASE = "https://castlab-i3hm.onrender.com";
 const FALLBACK_IMAGE = "https://via.placeholder.com/400x400?text=CASTLAB";
 
 const CATEGORY_LABELS = {
@@ -21,7 +20,6 @@ const urlCategory = params.get("category");
 const shopTitle = document.querySelector(".shop-title");
 const categoryLabel = document.getElementById("shopCategoryLabel");
 
-/* ---------- FETCH PRODUCTS ---------- */
 async function fetchProducts({ scale, search, category } = {}) {
   const qs = new URLSearchParams();
   if (scale) qs.set("scale", scale);
@@ -67,7 +65,16 @@ function setActiveCategoryLink(category) {
   });
 }
 
-/* ---------- LOAD PRODUCTS ---------- */
+function markWishlistItems() {
+  getWishlist().forEach((item) => {
+    const card = document.querySelector(`.product-card[data-id="${item.id}"]`);
+    if (!card) return;
+    const btn = card.querySelector(".like-btn");
+    btn.classList.add("active");
+    btn.textContent = "♥";
+  });
+}
+
 async function loadProducts({ scale = null, search = null, category = null } = {}) {
   if (!grid) return;
 
@@ -83,30 +90,31 @@ async function loadProducts({ scale = null, search = null, category = null } = {
   }
 
   products.forEach((product) => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-    card.dataset.id = product._id || product.id;
-
+    const id = product._id || product.id;
+    const oos = isOutOfStock(product);
     const imageSrc =
       product.image && product.image.trim() !== ""
         ? product.image
         : FALLBACK_IMAGE;
 
+    const card = document.createElement("div");
+    card.className = `product-card${oos ? " out-of-stock" : ""}`;
+    card.dataset.id = id;
+    card.dataset.stock = String(product.stock ?? 0);
+
     card.innerHTML = `
       <div class="product-stage">
-        <button class="like-btn btn-ripple" aria-label="Add to wishlist">♡</button>
-        <img
-          src="${imageSrc}"
-          alt="${product.name}"
-          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
-        />
+        ${oos ? '<span class="stock-label">Out of Stock</span>' : ""}
+        <button class="like-btn btn-ripple" type="button" aria-label="Add to wishlist">♡</button>
+        <img src="${imageSrc}" alt="${product.name}"
+          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'" />
       </div>
       <div class="product-info">
         <h3>${product.name}</h3>
         <p class="subtitle">${product.brand}</p>
         <div class="price-row">
           <span class="price">₹${product.price}</span>
-          <button class="add-btn btn-ripple" type="button">+</button>
+          <button class="add-btn btn-ripple" type="button" ${oos ? "disabled" : ""}>+</button>
         </div>
       </div>
     `;
@@ -117,53 +125,6 @@ async function loadProducts({ scale = null, search = null, category = null } = {
   markWishlistItems();
 }
 
-/* ---------- CART ---------- */
-function addToCart(productId) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const existing = cart.find((item) => item.productId === productId);
-
-  if (existing) {
-    existing.quantity += 1;
-  } else {
-    cart.push({ productId, quantity: 1 });
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  updateCartBadge();
-  showAddedFeedback();
-}
-
-/* ---------- WISHLIST ---------- */
-function getWishlist() {
-  return JSON.parse(localStorage.getItem("wishlist")) || [];
-}
-
-function saveWishlist(wishlist) {
-  localStorage.setItem("wishlist", JSON.stringify(wishlist));
-}
-
-function addToWishlist(product) {
-  const wishlist = getWishlist();
-  if (wishlist.some((item) => item.id === product.id)) return;
-  wishlist.push(product);
-  saveWishlist(wishlist);
-}
-
-function removeFromWishlist(id) {
-  saveWishlist(getWishlist().filter((item) => item.id !== id));
-}
-
-function markWishlistItems() {
-  getWishlist().forEach((item) => {
-    const card = document.querySelector(`.product-card[data-id="${item.id}"]`);
-    if (!card) return;
-    const btn = card.querySelector(".like-btn");
-    btn.classList.add("active");
-    btn.textContent = "♥";
-  });
-}
-
-/* ---------- EVENTS ---------- */
 grid.addEventListener("click", (e) => {
   const card = e.target.closest(".product-card");
   if (!card) return;
@@ -172,6 +133,7 @@ grid.addEventListener("click", (e) => {
   if (!productId) return;
 
   if (e.target.classList.contains("like-btn")) {
+    e.stopPropagation();
     const btn = e.target;
     const active = btn.classList.toggle("active");
     btn.textContent = active ? "♥" : "♡";
@@ -183,14 +145,26 @@ grid.addEventListener("click", (e) => {
       image: card.querySelector("img").src
     };
 
-    active ? addToWishlist(product) : removeFromWishlist(productId);
+    if (active) {
+      const list = getWishlist();
+      if (!list.some((i) => i.id === productId)) {
+        list.push(product);
+        saveWishlist(list);
+      }
+    } else {
+      saveWishlist(getWishlist().filter((i) => i.id !== productId));
+    }
     return;
   }
 
   if (e.target.classList.contains("add-btn")) {
+    e.stopPropagation();
+    if (card.classList.contains("out-of-stock")) return;
+
     e.target.classList.add("pulse");
     setTimeout(() => e.target.classList.remove("pulse"), 350);
-    addToCart(productId);
+    addToCartById(productId);
+    showAddedFeedback();
     return;
   }
 
@@ -212,7 +186,6 @@ buttons.forEach((btn) => {
   });
 });
 
-/* ---------- INIT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   if (urlSearch) {
     loadProducts({ search: urlSearch });
@@ -245,7 +218,6 @@ function showAddedFeedback() {
   toast.className = "cart-toast";
   toast.textContent = "✅ Added to Cart";
   document.body.appendChild(toast);
-
   setTimeout(() => toast.classList.add("show"), 10);
   setTimeout(() => {
     toast.classList.remove("show");
