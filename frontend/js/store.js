@@ -1,4 +1,4 @@
-/* Shared cart & wishlist — load after config.js */
+/* Shared cart, wishlist & nav — load after config.js */
 
 function getCart() {
   return JSON.parse(localStorage.getItem("cart")) || [];
@@ -45,19 +45,37 @@ function isOutOfStock(product) {
   return !product || product.stock === undefined || product.stock <= 0;
 }
 
+function getStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+}
+
+function logoutUser() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
+}
+
 function updateCartBadge() {
   const count = getCartCount();
   const link = document.getElementById("cartNavLink");
+  const homeCart = document.getElementById("homeCartLink");
   const legacyBadge = document.getElementById("cartBadge");
 
-  if (link) {
-    link.textContent = count > 0 ? `Cart (${count})` : "Cart";
-    link.classList.remove("bump");
+  const label = count > 0 ? `Cart (${count})` : "Cart";
+
+  [link, homeCart].forEach((el) => {
+    if (!el) return;
+    el.textContent = el.id === "homeCartLink" ? `🛒${count > 0 ? ` (${count})` : ""}` : label;
+    el.classList.remove("bump");
     if (count > 0) {
-      void link.offsetWidth;
-      link.classList.add("bump");
+      void el.offsetWidth;
+      el.classList.add("bump");
     }
-  }
+  });
 
   if (legacyBadge) {
     if (count === 0) {
@@ -66,9 +84,6 @@ function updateCartBadge() {
     } else {
       legacyBadge.classList.remove("hidden");
       legacyBadge.textContent = count;
-      legacyBadge.classList.remove("bump");
-      void legacyBadge.offsetWidth;
-      legacyBadge.classList.add("bump");
     }
   }
 }
@@ -76,37 +91,86 @@ function updateCartBadge() {
 function updateWishlistBadge() {
   const count = getWishlistCount();
   const link = document.getElementById("wishlistNavLink");
+  const homeWish = document.getElementById("homeWishlistLink");
 
   if (link) {
     link.textContent = count > 0 ? `Wishlist (${count})` : "Wishlist";
   }
+  if (homeWish) {
+    homeWish.textContent = count > 0 ? `♡ (${count})` : "♡";
+  }
+}
+
+function closeUserMenu() {
+  document.getElementById("userMenuDropdown")?.classList.add("hidden");
+  document.getElementById("userMenu")?.classList.remove("open");
+}
+
+function toggleUserMenu(e) {
+  e?.preventDefault();
+  e?.stopPropagation();
+  const menu = document.getElementById("userMenu");
+  const dropdown = document.getElementById("userMenuDropdown");
+  if (!menu || !dropdown) return;
+  const open = dropdown.classList.toggle("hidden");
+  menu.classList.toggle("open", !open);
 }
 
 function updateAuthNav() {
   const token = localStorage.getItem("token");
+  const user = getStoredUser();
   const authLink = document.getElementById("authNavLink");
   const ordersLink = document.getElementById("ordersNavLink");
+  const userMenu = document.getElementById("userMenu");
 
   if (ordersLink) {
     ordersLink.classList.toggle("hidden", !token);
   }
 
-  if (authLink) {
-    if (token) {
-      authLink.textContent = "Logout";
-      authLink.href = "#";
-      authLink.onclick = (e) => {
-        e.preventDefault();
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        window.location.href = "login.html";
-      };
-    } else {
+  if (token && user) {
+    if (authLink) authLink.classList.add("hidden");
+
+    if (userMenu) {
+      userMenu.classList.remove("hidden");
+      const initials = getUserInitials(user.name);
+      const avatar = document.getElementById("userAvatar");
+      const menuName = document.getElementById("userMenuName");
+      const dropName = document.getElementById("userDropdownName");
+      const dropEmail = document.getElementById("userDropdownEmail");
+
+      if (avatar) avatar.textContent = initials;
+      if (menuName) menuName.textContent = user.name?.split(" ")[0] || "Account";
+      if (dropName) dropName.textContent = user.name || "Collector";
+      if (dropEmail) dropEmail.textContent = user.email || "";
+    }
+  } else {
+    if (userMenu) {
+      userMenu.classList.add("hidden");
+      userMenu.classList.remove("open");
+    }
+    if (authLink) {
+      authLink.classList.remove("hidden");
       authLink.textContent = "Login";
       authLink.href = "login.html";
       authLink.onclick = null;
     }
+    closeUserMenu();
   }
+}
+
+function initUserMenuEvents() {
+  document.getElementById("userMenuTrigger")?.addEventListener("click", toggleUserMenu);
+
+  document.getElementById("logoutBtn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    logoutUser();
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#userMenu")) {
+      closeUserMenu();
+    }
+  });
 }
 
 function initNavBadges() {
@@ -115,7 +179,11 @@ function initNavBadges() {
   updateAuthNav();
 }
 
-document.addEventListener("DOMContentLoaded", initNavBadges);
+document.addEventListener("DOMContentLoaded", () => {
+  initNavBadges();
+  initUserMenuEvents();
+});
+
 window.addEventListener("storage", initNavBadges);
 window.addEventListener("cart-updated", updateCartBadge);
 window.addEventListener("wishlist-updated", updateWishlistBadge);

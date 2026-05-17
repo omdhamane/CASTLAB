@@ -14,27 +14,47 @@
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 
-<body>
+<body class="page-home">
 
 <!-- ================= HEADER ================= -->
 
 <header class="top-nav">
-  <div class="logo">CASTLAB</div>
+  <div class="top-nav-bar">
+    <a href="index.html" class="logo">CASTLAB</a>
+    <div class="top-nav-actions">
+      <a href="wishlist.html" class="top-nav-icon" id="homeWishlistLink" title="Wishlist">♡</a>
+      <a href="cart.html" class="top-nav-icon" id="homeCartLink" title="Cart">🛒</a>
+      <div class="nav-auth-slot nav-auth-slot--compact">
+        <div class="user-menu hidden" id="userMenu">
+          <button type="button" class="user-menu-trigger" id="userMenuTrigger">
+            <span class="user-avatar" id="userAvatar">?</span>
+            <span class="user-menu-name" id="userMenuName">Account</span>
+            <span class="user-menu-chevron">▾</span>
+          </button>
+          <div class="user-menu-dropdown hidden" id="userMenuDropdown">
+            <div class="user-menu-header">
+              <strong id="userDropdownName">—</strong>
+              <span id="userDropdownEmail">—</span>
+            </div>
+            <a href="orders.html">My Orders</a>
+            <a href="shop.html">Shop</a>
+            <button type="button" id="logoutBtn">Sign out</button>
+          </div>
+        </div>
+        <a href="login.html" class="top-nav-login" id="authNavLink">Login</a>
+      </div>
+    </div>
+  </div>
 
-  <input
-  type="search"
-  id="navSearch"
-  class="nav-search"
-  placeholder="Search models, brands, castings..."
-  />
-
-  <div id="searchSuggestions" class="search-suggestions"></div>
-
-
-
-  <div class="nav-icons">
-    <a href="wishlist.html" title="Wishlist">♡</a>
-    <a href="cart.html" title="Cart">🛒</a>
+  <div class="top-nav-search-wrap">
+    <input
+      type="search"
+      id="navSearch"
+      class="nav-search"
+      placeholder="Search models, brands, castings..."
+      autocomplete="off"
+    />
+    <div id="searchSuggestions" class="search-suggestions"></div>
   </div>
 </header>
 

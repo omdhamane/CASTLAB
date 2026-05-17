@@ -256,6 +256,38 @@ input:focus {
   text-decoration: underline;
 }
 
+.auth-error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  min-height: 1.25rem;
+  margin: 0 0 0.75rem;
+}
+
+.password-requirements {
+  list-style: none;
+  margin: -0.25rem 0 0.85rem;
+  padding: 0;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.pw-req {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+
+.pw-req.met {
+  color: #7dffb3;
+}
+
+.pw-req-icon {
+  flex-shrink: 0;
+  width: 1rem;
+  text-align: center;
+}
+
 .register-page .glass-card {
   max-width: 420px;
   padding: 28px;

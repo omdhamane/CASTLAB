@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { validatePassword } = require("../utils/passwordValidation");
 
 // REGISTER
 exports.registerUser = async (req, res) => {
@@ -18,9 +19,9 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
-    // Validate password length
-    if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    const pwCheck = validatePassword(password);
+    if (!pwCheck.valid) {
+      return res.status(400).json({ message: pwCheck.errors[0] });
     }
 
     // Check existing user

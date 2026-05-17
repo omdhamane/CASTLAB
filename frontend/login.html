@@ -13,11 +13,12 @@
 <body class="login-page">
 
   <main style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
-  <form class="glass-card" onsubmit="login(event)" style="width:420px;padding:32px;">
-    <h2 style="margin-bottom:24px;">Login</h2>
+  <form class="glass-card auth-form" onsubmit="login(event)" style="width:420px;padding:32px;">
+    <h2 style="margin-bottom:24px;">Sign in</h2>
+    <p id="authError" class="auth-error" role="alert"></p>
 
-    <input id="email" type="email" placeholder="Email" required />
-    <input id="password" type="password" placeholder="Password" required />
+    <input id="email" type="email" placeholder="Email" required autocomplete="email" />
+    <input id="password" type="password" placeholder="Password" required autocomplete="current-password" />
 
     <button type="submit">Login</button>
 

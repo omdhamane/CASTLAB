@@ -12,18 +12,22 @@
 </head>
 <body class="register-page">
 
-  <form class="glass-card" onsubmit="register(event)" style="max-width: 400px; margin: 120px auto;">
-    <h2>Register</h2>
+  <form class="glass-card auth-form" onsubmit="register(event)" style="max-width: 420px; margin: 120px auto;">
+    <h2>Create account</h2>
+    <p id="authError" class="auth-error" role="alert"></p>
 
-    <input id="name" placeholder="Name" required />
-    <input id="email" type="email" placeholder="Email" required />
-    <input id="password" type="password" placeholder="Password" required />
+    <input id="name" placeholder="Full name" required autocomplete="name" />
+    <input id="email" type="email" placeholder="Email" required autocomplete="email" />
+    <input id="password" type="password" placeholder="Password" required autocomplete="new-password" />
+    <ul id="passwordRequirements" class="password-requirements" aria-live="polite"></ul>
+    <input id="confirmPassword" type="password" placeholder="Confirm password" required autocomplete="new-password" />
 
     <button type="submit">Register</button>
-    <p><a href="login.html">Back to login</a></p>
+    <p><a href="login.html">Already have an account? Sign in</a></p>
   </form>
 
   <script src="js/config.js"></script>
+  <script src="js/auth-validation.js"></script>
   <script src="js/auth.js"></script>
 </body>
 </html>

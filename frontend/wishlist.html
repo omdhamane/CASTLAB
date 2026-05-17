@@ -31,7 +31,25 @@
         <a href="wishlist.html" class="active" id="wishlistNavLink">Wishlist</a>
         <a href="cart.html" class="cart-nav-link" id="cartNavLink">Cart</a>
         <a href="orders.html" id="ordersNavLink" class="hidden">Orders</a>
-        <a href="login.html" id="authNavLink">Login</a>
+        <div class="nav-auth-slot">
+          <div class="user-menu hidden" id="userMenu">
+            <button type="button" class="user-menu-trigger" id="userMenuTrigger">
+              <span class="user-avatar" id="userAvatar">?</span>
+              <span class="user-menu-name" id="userMenuName">Account</span>
+              <span class="user-menu-chevron">▾</span>
+            </button>
+            <div class="user-menu-dropdown hidden" id="userMenuDropdown">
+              <div class="user-menu-header">
+                <strong id="userDropdownName">—</strong>
+                <span id="userDropdownEmail">—</span>
+              </div>
+              <a href="orders.html">My Orders</a>
+              <a href="shop.html">Shop</a>
+              <button type="button" id="logoutBtn">Sign out</button>
+            </div>
+          </div>
+          <a href="login.html" id="authNavLink">Login</a>
+        </div>
       </nav>
     </header>
 
