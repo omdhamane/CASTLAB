@@ -65,9 +65,23 @@ const generateInvoice = async (order) => {
         .text(order.user?.name || "Customer", 50, 150)
         .text(order.user?.email || "", 50, 165);
 
+      let currentY = 180;
+      if (order.contactNumber) {
+        doc.text(`Phone: ${order.contactNumber}`, 50, currentY);
+        currentY += 15;
+      }
+      if (order.shippingAddress && order.shippingAddress.address) {
+        const addr = order.shippingAddress;
+        doc.text(addr.address, 50, currentY);
+        currentY += 15;
+        doc.text(`${addr.city || ""}, ${addr.state || ""} ${addr.zipCode || ""}`, 50, currentY);
+        currentY += 15;
+        doc.text(addr.country || "", 50, currentY);
+      }
+
       /* ================= TABLE ================= */
 
-      const tableTop = 220;
+      const tableTop = 250;
 
       doc
         .rect(50, tableTop, 495, 25)
