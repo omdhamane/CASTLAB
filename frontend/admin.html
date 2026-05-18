@@ -63,12 +63,15 @@
 
         <textarea id="description" placeholder="Description" rows="3"></textarea>
 
-        <label class="file-label">Image URL</label>
-        <input type="url" id="image" placeholder="https://... or upload below" />
-
-        <label class="file-label">Upload image (max 3MB)</label>
-        <input type="file" id="imageFile" accept="image/*" />
-        <img id="imagePreview" class="admin-preview hidden" alt="Preview" />
+        <label class="file-label">Upload Images (Gallery)</label>
+        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: -5px; margin-bottom: 10px;">Upload up to 5 high-res images for the product gallery. Drag and drop supported.</p>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="imageFiles" accept="image/*" multiple class="file-input-hidden" />
+          <div class="upload-message">
+            <span>Drag & Drop images here or click to browse</span>
+          </div>
+          <div id="imagePreviews" class="image-previews-grid"></div>
+        </div>
 
         <div class="checkbox-row">
           <label><input type="checkbox" id="isBestSeller" /> Best Seller</label>

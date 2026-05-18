@@ -22,7 +22,19 @@ const userSchema = new mongoose.Schema(
     city: { type: String, default: "" },
     state: { type: String, default: "" },
     zipCode: { type: String, default: "" },
-    country: { type: String, default: "" }
+    country: { type: String, default: "" },
+    role: {
+      type: String,
+      enum: ["user", "admin", "superadmin"],
+      default: "user"
+    },
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    verificationToken: String,
+    resetPasswordToken: String,
+    resetPasswordExpire: Date
   },
   { timestamps: true }
 );

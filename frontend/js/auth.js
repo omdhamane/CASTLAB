@@ -5,6 +5,9 @@ async function login(e) {
   const password = document.getElementById("password").value;
   const errEl = document.getElementById("authError");
 
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerText;
+
   if (errEl) errEl.textContent = "";
 
   if (!email || !password) {
@@ -18,6 +21,9 @@ async function login(e) {
     return;
   }
 
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Authenticating...";
+
   try {
     const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: "POST",
@@ -30,12 +36,21 @@ async function login(e) {
     if (res.ok) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      window.location.href = "shop.html";
+      
+      if (data.user && data.user.isVerified === false) {
+        window.location.href = "verify-email.html";
+      } else {
+        window.location.href = "shop.html";
+      }
     } else {
       if (errEl) errEl.textContent = data.message || "Login failed";
+      submitBtn.disabled = false;
+      submitBtn.innerText = originalBtnText;
     }
   } catch {
     if (errEl) errEl.textContent = "Could not connect to server.";
+    submitBtn.disabled = false;
+    submitBtn.innerText = originalBtnText;
   }
 }
 
@@ -48,6 +63,9 @@ async function register(e) {
   const confirm = document.getElementById("confirmPassword")?.value || "";
   const errEl = document.getElementById("authError");
 
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerText;
+  
   if (errEl) errEl.textContent = "";
 
   if (!name || !email || !password) {
@@ -72,6 +90,9 @@ async function register(e) {
     return;
   }
 
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Creating Account...";
+
   try {
     const res = await fetch(`${API_BASE}/api/auth/register`, {
       method: "POST",
@@ -85,16 +106,26 @@ async function register(e) {
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "shop.html";
+        
+        // Redirect to verification page since they just registered
+        if (!data.user.isVerified) {
+          window.location.href = "verify-email.html";
+        } else {
+          window.location.href = "shop.html";
+        }
       } else {
         alert("Registered successfully. Please login.");
         window.location.href = "login.html";
       }
     } else {
       if (errEl) errEl.textContent = data.message || "Registration failed";
+      submitBtn.disabled = false;
+      submitBtn.innerText = originalBtnText;
     }
   } catch {
     if (errEl) errEl.textContent = "Could not connect to server.";
+    submitBtn.disabled = false;
+    submitBtn.innerText = originalBtnText;
   }
 }
 

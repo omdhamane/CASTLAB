@@ -1,12 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const protect = require("../middleware/auth.middleware");
+const { protect } = require("../middleware/auth.middleware");
 
 const {
   registerUser,
   loginUser,
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
+  resendVerification
 } = require("../controllers/auth.controller");
 
 // POST /api/auth/register
@@ -20,5 +24,17 @@ router.get("/profile", protect, getUserProfile);
 
 // PUT /api/auth/profile
 router.put("/profile", protect, updateUserProfile);
+
+// POST /api/auth/forgotpassword
+router.post("/forgotpassword", forgotPassword);
+
+// PUT /api/auth/resetpassword/:resetToken
+router.put("/resetpassword/:resetToken", resetPassword);
+
+// POST /api/auth/verifyemail/:token
+router.post("/verifyemail/:token", verifyEmail);
+
+// POST /api/auth/resend-verification
+router.post("/resend-verification", resendVerification);
 
 module.exports = router;

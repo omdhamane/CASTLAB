@@ -42,10 +42,10 @@ async function loadProduct() {
 
     const product = await res.json();
 
-    // ✅ Handle single image or multiple images
+    // Handle multiple images (array of objects) or single legacy image
     const images =
       product.images && product.images.length > 0
-        ? product.images
+        ? product.images.map(img => img.url)
         : product.image && product.image.trim() !== ""
         ? [product.image]
         : [FALLBACK_IMAGE];
@@ -56,14 +56,16 @@ async function loadProduct() {
     container.innerHTML = `
       <div class="product-detail${oos ? " out-of-stock" : ""}">
 
-        <!-- LEFT: Image -->
-        <div class="product-detail-image">
-          <img 
-            id="mainImage" 
-            src="${images[0]}" 
-            alt="${product.name}"
-            onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
-          />
+        <!-- LEFT: Image Gallery -->
+        <div class="product-gallery">
+          <div class="main-image-container">
+            <img 
+              id="mainImage" 
+              src="${images[0]}" 
+              alt="${product.name}"
+              onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+            />
+          </div>
           <div class="thumbnail-row" id="thumbnails"></div>
         </div>
 
@@ -110,20 +112,24 @@ async function loadProduct() {
 
     if (images.length > 1) {
       images.forEach((img, index) => {
+        const tWrapper = document.createElement("div");
+        tWrapper.className = `thumbnail-item ${index === 0 ? "active" : ""}`;
+        
         const t = document.createElement("img");
         t.src = img;
-        t.className = `thumbnail ${index === 0 ? "active" : ""}`;
         t.alt = `${product.name} view ${index + 1}`;
         t.onerror = () => { t.src = FALLBACK_IMAGE; };
 
-        t.addEventListener("click", () => {
+        tWrapper.appendChild(t);
+
+        tWrapper.addEventListener("click", () => {
           mainImage.src = img;
-          document.querySelectorAll(".thumbnail")
+          document.querySelectorAll(".thumbnail-item")
             .forEach(el => el.classList.remove("active"));
-          t.classList.add("active");
+          tWrapper.classList.add("active");
         });
 
-        thumbContainer.appendChild(t);
+        thumbContainer.appendChild(tWrapper);
       });
     }
 
@@ -179,4 +185,196 @@ async function loadProduct() {
 }
 
 /* ---------- INIT ---------- */
-document.addEventListener("DOMContentLoaded", loadProduct);
+document.addEventListener("DOMContentLoaded", () => {
+  loadProduct();
+  loadReviews();
+  setupReviewForm();
+});
+
+/* ======================================================
+   REVIEWS SYSTEM
+   ====================================================== */
+
+let allReviews = [];
+
+async function loadReviews() {
+  if (!productId) return;
+  const section = document.getElementById("reviewsSection");
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/reviews/${productId}`);
+    if (!res.ok) throw new Error("Failed to load reviews");
+    allReviews = await res.json();
+    
+    section.classList.remove("hidden");
+    renderReviews();
+    updateReviewStats();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function getStarsHtml(rating) {
+  let stars = "";
+  for (let i = 1; i <= 5; i++) {
+    stars += i <= rating ? "★" : "☆";
+  }
+  return stars;
+}
+
+function updateReviewStats() {
+  const avgDisplay = document.getElementById("avgRatingDisplay");
+  const starsDisplay = document.getElementById("avgStarsDisplay");
+  const countDisplay = document.getElementById("totalReviewsDisplay");
+  
+  if (allReviews.length === 0) {
+    avgDisplay.textContent = "0.0";
+    starsDisplay.textContent = getStarsHtml(0);
+    countDisplay.textContent = "0 reviews";
+    return;
+  }
+  
+  const total = allReviews.reduce((sum, r) => sum + r.rating, 0);
+  const avg = (total / allReviews.length).toFixed(1);
+  
+  avgDisplay.textContent = avg;
+  starsDisplay.textContent = getStarsHtml(Math.round(avg));
+  countDisplay.textContent = `${allReviews.length} review${allReviews.length > 1 ? 's' : ''}`;
+}
+
+function renderReviews() {
+  const list = document.getElementById("reviewsList");
+  const sort = document.getElementById("reviewSort").value;
+  
+  let sorted = [...allReviews];
+  if (sort === "highest") sorted.sort((a, b) => b.rating - a.rating);
+  else if (sort === "lowest") sorted.sort((a, b) => a.rating - b.rating);
+  // newest is default from backend
+  
+  if (sorted.length === 0) {
+    list.innerHTML = "<p style='opacity:0.6; text-align:center;'>No reviews yet. Be the first to review!</p>";
+    return;
+  }
+  
+  list.innerHTML = sorted.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-meta">
+          <strong>${r.user?.name || "Anonymous"}</strong>
+          <span>${new Date(r.createdAt).toLocaleDateString()}</span>
+        </div>
+        <div class="stars-display">${getStarsHtml(r.rating)}</div>
+      </div>
+      <p class="review-text">${r.comment}</p>
+      <div class="review-footer">
+        <button class="helpful-btn" onclick="voteHelpful('${r._id}')">Helpful (${r.helpfulVotes || 0})</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+document.getElementById("reviewSort")?.addEventListener("change", renderReviews);
+
+// Helpful vote logic
+window.voteHelpful = async (reviewId) => {
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  if (!token) return alert("Please login to vote.");
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/reviews/${reviewId}/helpful`, {
+      method: "PUT",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (res.ok) {
+      loadReviews();
+    }
+  } catch (err) {
+    console.error("Vote failed");
+  }
+};
+
+// Form logic
+function setupReviewForm() {
+  const writeBtn = document.getElementById("writeReviewBtn");
+  const cancelBtn = document.getElementById("cancelReviewBtn");
+  const formContainer = document.getElementById("reviewFormContainer");
+  const form = document.getElementById("reviewForm");
+  const stars = document.querySelectorAll("#starRatingInput span");
+  const ratingInput = document.getElementById("reviewRating");
+  
+  writeBtn?.addEventListener("click", () => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (!token) {
+      alert("Please login to write a review.");
+      window.location.href = "login.html";
+      return;
+    }
+    formContainer.classList.remove("hidden");
+    writeBtn.classList.add("hidden");
+  });
+  
+  cancelBtn?.addEventListener("click", () => {
+    formContainer.classList.add("hidden");
+    writeBtn.classList.remove("hidden");
+    form.reset();
+    ratingInput.value = "0";
+    stars.forEach(s => s.classList.remove("active"));
+  });
+  
+  // Interactive stars
+  stars.forEach(star => {
+    star.addEventListener("click", () => {
+      const val = parseInt(star.getAttribute("data-value"));
+      ratingInput.value = val;
+      stars.forEach(s => {
+        if (parseInt(s.getAttribute("data-value")) <= val) {
+          s.classList.add("active");
+        } else {
+          s.classList.remove("active");
+        }
+      });
+    });
+  });
+  
+  // Submit
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const rating = ratingInput.value;
+    const comment = document.getElementById("reviewComment").value;
+    
+    if (rating === "0") return alert("Please select a star rating.");
+    
+    const submitBtn = document.getElementById("submitReviewBtn");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/reviews/${productId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ rating, comment })
+      });
+      
+      const data = await res.json();
+      if (res.ok) {
+        formContainer.classList.add("hidden");
+        writeBtn.classList.remove("hidden");
+        form.reset();
+        ratingInput.value = "0";
+        stars.forEach(s => s.classList.remove("active"));
+        loadReviews();
+      } else {
+        alert(data.message || "Failed to submit review");
+      }
+    } catch (err) {
+      alert("Network error.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit Review";
+    }
+  });
+}

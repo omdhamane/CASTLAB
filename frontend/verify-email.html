@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verify Email | CASTLAB</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .verify-box {
+      width: 420px;
+      padding: 40px;
+      text-align: center;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top-color: #ff4d4d;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .status-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+  </style>
+</head>
+<body class="login-page">
+
+  <main style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+    <div class="glass-card verify-box" id="verifyBox">
+      <div id="loadingState">
+        <div class="spinner"></div>
+        <h2>Verifying Email...</h2>
+        <p style="opacity: 0.7;">Please wait while we confirm your email address.</p>
+      </div>
+
+      <div id="successState" class="hidden">
+        <div class="status-icon success">✓</div>
+        <h2>Email Verified!</h2>
+        <p style="opacity: 0.7; margin-bottom: 24px;">Your account is now fully active.</p>
+        <a href="login.html" class="btn solid" style="width: 100%; display: block; text-align: center;">Continue to Login</a>
+      </div>
+
+      <div id="errorState" class="hidden">
+        <div class="status-icon error">⚠</div>
+        <h2>Verification Failed</h2>
+        <p id="errorMessage" style="opacity: 0.7; margin-bottom: 24px;">The link is invalid or has expired.</p>
+        <button id="resendBtn" class="btn outline" style="width: 100%;">Resend Verification Email</button>
+        <a href="login.html" style="display: block; margin-top: 16px; opacity: 0.8;">Back to Login</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      
+      const loadingState = document.getElementById("loadingState");
+      const successState = document.getElementById("successState");
+      const errorState = document.getElementById("errorState");
+      const errorMessage = document.getElementById("errorMessage");
+      const resendBtn = document.getElementById("resendBtn");
+
+      if (!token) {
+        loadingState.classList.add("hidden");
+        errorState.classList.remove("hidden");
+        errorMessage.innerText = "No verification token provided.";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/auth/verifyemail/${token}`, {
+          method: "POST"
+        });
+        const data = await res.json();
+        
+        loadingState.classList.add("hidden");
+
+        if (res.ok) {
+          successState.classList.remove("hidden");
+          // Update local state if they were already logged in but unverified
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+          }
+        } else {
+          errorState.classList.remove("hidden");
+          errorMessage.innerText = data.message || "The verification link is invalid or has expired.";
+        }
+      } catch (error) {
+        loadingState.classList.add("hidden");
+        errorState.classList.remove("hidden");
+        errorMessage.innerText = "Network error. Please try again.";
+      }
+
+      resendBtn.addEventListener("click", async () => {
+        const email = prompt("Please enter your email address:");
+        if (!email) return;
+
+        resendBtn.disabled = true;
+        resendBtn.innerText = "Sending...";
+
+        try {
+          const res = await fetch(`${API_URL}/auth/resend-verification`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+          });
+          const data = await res.json();
+          alert(data.message || "Verification email sent!");
+        } catch (error) {
+          alert("Failed to resend. Please try again.");
+        } finally {
+          resendBtn.disabled = false;
+          resendBtn.innerText = "Resend Verification Email";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
