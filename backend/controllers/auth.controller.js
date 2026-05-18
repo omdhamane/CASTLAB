@@ -1,11 +1,13 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { validatePassword } = require("../utils/passwordValidation");
-
 const crypto = require("crypto");
-const sendEmail = require("../utils/sendEmail");
-const { getVerificationEmail, getResetPasswordEmail, getWelcomeEmail } = require("../utils/emailTemplates");
+const { validatePassword } = require("../utils/passwordValidation");
+const {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+  sendWelcomeEmail
+} = require("../utils/sendEmail");
 
 // REGISTER
 exports.registerUser = async (req, res) => {
@@ -48,23 +50,17 @@ exports.registerUser = async (req, res) => {
       verificationToken: hashedVerificationToken
     });
 
-    // Send verification email — MUST use FRONTEND_URL, never backend host
+    // Send verification email — always uses FRONTEND_URL
     const FRONTEND = process.env.FRONTEND_URL;
-    if (!FRONTEND) {
-      console.error("❌ FRONTEND_URL env var is not set! Email links will be broken.");
-    }
+    if (!FRONTEND) console.error("❌ FRONTEND_URL is not set!");
     const verifyUrl = `${FRONTEND}/verify-email.html?token=${verificationTokenStr}`;
     console.log("[DEBUG] Verification URL:", verifyUrl);
-    
+
     try {
-      await sendEmail({
-        email: user.email,
-        subject: "Verify Your CASTLAB Account",
-        html: getVerificationEmail(verifyUrl)
-      });
+      await sendVerificationEmail(user.email, verifyUrl);
     } catch (emailError) {
-      console.error("Failed to send verification email:", emailError);
-      // We don't fail registration if email fails, but we should note it
+      console.error("Failed to send verification email:", emailError.message);
+      // Registration still succeeds even if email fails
     }
 
     const token = jwt.sign(
@@ -204,28 +200,20 @@ exports.forgotPassword = async (req, res) => {
     user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // Password reset link — MUST use FRONTEND_URL, never backend host
+    // Password reset link — always uses FRONTEND_URL
     const FRONTEND = process.env.FRONTEND_URL;
-    if (!FRONTEND) {
-      console.error("❌ FRONTEND_URL env var is not set! Reset link will be broken.");
-    }
+    if (!FRONTEND) console.error("❌ FRONTEND_URL is not set!");
     const resetUrl = `${FRONTEND}/reset-password.html?token=${resetToken}`;
     console.log("[DEBUG] Password Reset URL:", resetUrl);
 
     try {
-      await sendEmail({
-        email: user.email,
-        subject: "CASTLAB - Password Reset",
-        html: getResetPasswordEmail(resetUrl)
-      });
-
-      res.status(200).json({ message: "Email sent" });
+      await sendPasswordResetEmail(user.email, resetUrl);
+      res.status(200).json({ message: "Password reset email sent" });
     } catch (err) {
-      console.error(err);
+      console.error("Reset email failed:", err.message);
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save();
-
       return res.status(500).json({ message: "Email could not be sent" });
     }
   } catch (error) {
@@ -299,15 +287,11 @@ exports.verifyEmail = async (req, res) => {
     user.verificationToken = undefined;
     await user.save();
     
-    // Optional Welcome Email
+    // Send welcome email (non-blocking)
     try {
-      await sendEmail({
-        email: user.email,
-        subject: "Welcome to CASTLAB",
-        html: getWelcomeEmail(user.name)
-      });
+      await sendWelcomeEmail(user.email, user.name);
     } catch (e) {
-      console.error("Failed to send welcome email", e);
+      console.error("Failed to send welcome email:", e.message);
     }
 
     // Generate fresh token
@@ -359,19 +343,13 @@ exports.resendVerification = async (req, res) => {
     user.verificationToken = hashedVerificationToken;
     await user.save();
 
-    // Resend verification link — MUST use FRONTEND_URL, never backend host
+    // Resend verification link — always uses FRONTEND_URL
     const FRONTEND = process.env.FRONTEND_URL;
-    if (!FRONTEND) {
-      console.error("❌ FRONTEND_URL env var is not set! Email links will be broken.");
-    }
+    if (!FRONTEND) console.error("❌ FRONTEND_URL is not set!");
     const verifyUrl = `${FRONTEND}/verify-email.html?token=${verificationTokenStr}`;
     console.log("[DEBUG] Resend Verification URL:", verifyUrl);
-    
-    await sendEmail({
-      email: user.email,
-      subject: "Verify Your CASTLAB Account",
-      html: getVerificationEmail(verifyUrl)
-    });
+
+    await sendVerificationEmail(user.email, verifyUrl);
 
     res.status(200).json({ message: "Verification email sent" });
   } catch (error) {
