@@ -316,44 +316,65 @@ exports.verifyEmail = async (req, res) => {
 };
 
 // RESEND VERIFICATION EMAIL
+// POST /api/auth/resend-verification
 exports.resendVerification = async (req, res) => {
   try {
     const { email } = req.body;
+
     if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+      return res.status(400).json({ success: false, message: "Email is required" });
     }
 
     const user = await User.findOne({ email: email.toLowerCase() });
-    
+
+    // Prevent email enumeration — always return 200 if user not found
     if (!user) {
-      // Return success to prevent email enumeration
-      return res.status(200).json({ message: "If an account exists, a verification email has been sent." });
+      return res.status(200).json({
+        success: true,
+        message: "If an account exists with that email, a verification link has been sent."
+      });
     }
 
     if (user.isVerified) {
-      return res.status(400).json({ message: "Account is already verified" });
+      return res.status(400).json({
+        success: false,
+        message: "This account is already verified. Please log in."
+      });
     }
 
+    // Generate new token
     const verificationTokenStr = crypto.randomBytes(20).toString("hex");
-    const hashedVerificationToken = crypto
+    user.verificationToken = crypto
       .createHash("sha256")
       .update(verificationTokenStr)
       .digest("hex");
-
-    user.verificationToken = hashedVerificationToken;
     await user.save();
 
-    // Resend verification link — always uses FRONTEND_URL
+    // Build frontend verification URL
     const FRONTEND = process.env.FRONTEND_URL;
     if (!FRONTEND) console.error("❌ FRONTEND_URL is not set!");
     const verifyUrl = `${FRONTEND}/verify-email.html?token=${verificationTokenStr}`;
     console.log("[DEBUG] Resend Verification URL:", verifyUrl);
 
-    await sendVerificationEmail(user.email, verifyUrl);
+    try {
+      await sendVerificationEmail(user.email, verifyUrl);
+    } catch (emailErr) {
+      console.error("SMTP error on resend:", emailErr.message);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send verification email. Please try again later."
+      });
+    }
 
-    res.status(200).json({ message: "Verification email sent" });
+    return res.status(200).json({
+      success: true,
+      message: "Verification email sent. Please check your inbox."
+    });
   } catch (error) {
-    console.error("Resend verification error:", error.message);
-    res.status(500).json({ message: "Server error" });
+    console.error("resendVerification error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later."
+    });
   }
 };
