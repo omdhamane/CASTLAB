@@ -49,7 +49,8 @@ exports.registerUser = async (req, res) => {
     });
 
     // Send verification email
-    const verifyUrl = `${req.protocol}://${req.get("host")}/verify-email.html?token=${verificationTokenStr}`;
+    const frontendUrl = process.env.FRONTEND_URL || `${req.protocol}://${req.get("host")}`;
+    const verifyUrl = `${frontendUrl}/verify-email.html?token=${verificationTokenStr}`;
     
     try {
       await sendEmail({
@@ -199,7 +200,8 @@ exports.forgotPassword = async (req, res) => {
     user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    const resetUrl = `${req.protocol}://${req.get("host")}/reset-password.html?token=${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || `${req.protocol}://${req.get("host")}`;
+    const resetUrl = `${frontendUrl}/reset-password.html?token=${resetToken}`;
 
     try {
       await sendEmail({
