@@ -10,8 +10,9 @@ const nodemailer = require("nodemailer");
  * Sends a plain test email and returns full SMTP result.
  * REMOVE THIS ROUTE BEFORE GOING TO PRODUCTION.
  */
-router.post("/test-email", async (req, res) => {
-  const { to } = req.body;
+router.all("/test-email", async (req, res) => {
+  // Support both POST (body) and GET (query) so it can be tested in a browser
+  const to = req.body?.to || req.query?.to;
 
   if (!to) {
     return res.status(400).json({ success: false, message: "Provide { to: 'email@example.com' } in request body" });
