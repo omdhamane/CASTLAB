@@ -27,11 +27,17 @@ router.all("/test-email", async (req, res) => {
   console.log("[DEBUG ROUTE] /api/debug/test-email called. Env:", envReport);
 
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    tls: {
+      rejectUnauthorized: false,
+    },
+    family: 4,
   });
 
   // First verify the connection
