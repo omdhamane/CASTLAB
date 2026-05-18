@@ -1,40 +1,43 @@
 const { Resend } = require('resend');
 
-// Initialize Resend with the API key from environment variables
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
- * Send an email using Resend API
- * @param {Object} options 
- * @param {string} options.email - Recipient email
- * @param {string} options.subject - Email subject
- * @param {string} options.html - HTML content for the email
+ * Send a transactional email via Resend API
+ * @param {Object} options
+ * @param {string} options.email   - Recipient address
+ * @param {string} options.subject - Email subject line
+ * @param {string} options.html    - HTML body
  */
 const sendEmail = async (options) => {
   if (!process.env.RESEND_API_KEY) {
-    console.warn("⚠️  RESEND_API_KEY is not defined. Email will not be sent.");
+    console.error("❌ RESEND_API_KEY is not set. Email not sent.");
     return;
   }
 
+  // RESEND_FROM_EMAIL must be an address from a VERIFIED domain in your Resend account.
+  // e.g. "CASTLAB <noreply@yourdomain.com>"
+  // During testing with onboarding@resend.dev you can ONLY send to your own Resend account email.
+  const fromAddress = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+  console.log(`[DEBUG] Sending email FROM: ${fromAddress}  TO: ${options.email}`);
+
   try {
-    const data = await resend.emails.send({
-      // Resend requires a verified domain. 
-      // During development/testing, you can use 'onboarding@resend.dev'
-      // which allows sending ONLY to the email address registered with your Resend account.
-      from: 'CASTLAB <onboarding@resend.dev>',
+    const { data, error } = await resend.emails.send({
+      from: fromAddress,
       to: options.email,
       subject: options.subject,
       html: options.html,
     });
 
-    if (data.error) {
-      throw new Error(data.error.message);
+    if (error) {
+      console.error("Resend API error:", JSON.stringify(error));
+      throw new Error(error.message);
     }
 
-    console.log("Message sent via Resend: %s", data.data.id);
+    console.log("✅ Email sent via Resend. ID:", data.id);
     return data;
-  } catch (error) {
-    console.error("Resend Error:", error.message);
+  } catch (err) {
+    console.error("sendEmail failed:", err.message);
     throw new Error("Email could not be sent");
   }
 };
