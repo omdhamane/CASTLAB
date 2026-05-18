@@ -299,48 +299,72 @@ body::before {
 }
 
 .garage-tile {
-  height: 280px;
-  padding: 1.8rem;
+  position: relative;
+  height: 320px;
+  padding: 2rem;
   display: flex;
   align-items: flex-end;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 600;
-  letter-spacing: 0.4px;
-  color: #ffffff;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  isolation: isolate;
+}
+
+.garage-tile::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
   background-size: cover;
   background-position: center;
-  border: 1px solid rgba(255,255,255,0.08);
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.7s cubic-bezier(0.2, 1, 0.3, 1);
+  z-index: -2;
+}
+
+.garage-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.4) 100%);
+  z-index: -1;
+  transition: opacity 0.4s ease;
 }
 
 .garage-tile:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.55);
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 25px rgba(255, 77, 77, 0.12);
+  border-color: rgba(255, 77, 77, 0.3);
+  color: #ffffff;
 }
 
-.garage-tile.scale-1-64 {
-  background-image:
-    linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
-    url("../assets/images/1.64_home_poster.png");
+.garage-tile:hover::before {
+  transform: scale(1.08);
 }
 
-.garage-tile.scale-1-43 {
-  background-image:
-    linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
-    url("../assets/images/1.43_home_poster.png");
+.garage-tile:hover::after {
+  opacity: 0.8;
 }
 
-.garage-tile.scale-1-18 {
-  background-image:
-    linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
-    url("../assets/images/1.18_home_poster.png");
+.garage-tile.scale-1-64::before {
+  background-image: url("../assets/images/scale_1_64_premium.png");
 }
 
-.garage-tile.accessories {
-  background-image:
-    linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.85)),
-    url("../assets/images/protector_post.png");
+.garage-tile.scale-1-43::before {
+  background-image: url("../assets/images/scale_1_43_premium.png");
+}
+
+.garage-tile.scale-1-18::before {
+  background-image: url("../assets/images/scale_1_18_premium.png");
+}
+
+.garage-tile.accessories::before {
+  background-image: url("../assets/images/protector_post.png");
 }
 
 /* ======================================================
