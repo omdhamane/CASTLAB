@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,212 +17,202 @@
 
 <body class="page-home">
 
-<!-- ================= HEADER ================= -->
+  <!-- ================= HEADER ================= -->
 
-<header class="top-nav">
-  <div class="top-nav-bar">
-    <a href="index.html" class="logo">CASTLAB</a>
-    <div class="top-nav-actions">
-      <a href="wishlist.html" class="top-nav-icon" id="homeWishlistLink" title="Wishlist">♡</a>
-      <a href="cart.html" class="top-nav-icon" id="homeCartLink" title="Cart">🛒</a>
-      <div class="nav-auth-slot nav-auth-slot--compact">
-        <div class="user-menu hidden" id="userMenu">
-          <button type="button" class="user-menu-trigger" id="userMenuTrigger">
-            <span class="user-avatar" id="userAvatar">?</span>
-            <span class="user-menu-name" id="userMenuName">Account</span>
-            <span class="user-menu-chevron">▾</span>
-          </button>
-          <div class="user-menu-dropdown hidden" id="userMenuDropdown">
-            <div class="user-menu-header">
-              <strong id="userDropdownName">—</strong>
-              <span id="userDropdownEmail">—</span>
+  <header class="top-nav">
+    <div class="top-nav-bar">
+      <a href="index.html" class="logo">CASTLAB</a>
+      <div class="top-nav-actions">
+        <a href="wishlist.html" class="top-nav-icon" id="homeWishlistLink" title="Wishlist">♡</a>
+        <a href="cart.html" class="top-nav-icon" id="homeCartLink" title="Cart">🛒</a>
+        <div class="nav-auth-slot nav-auth-slot--compact">
+          <div class="user-menu hidden" id="userMenu">
+            <button type="button" class="user-menu-trigger" id="userMenuTrigger">
+              <span class="user-avatar" id="userAvatar">?</span>
+              <span class="user-menu-name" id="userMenuName">Account</span>
+              <span class="user-menu-chevron">▾</span>
+            </button>
+            <div class="user-menu-dropdown hidden" id="userMenuDropdown">
+              <div class="user-menu-header">
+                <strong id="userDropdownName">—</strong>
+                <span id="userDropdownEmail">—</span>
+              </div>
+              <a href="account.html">My Profile</a>
+              <a href="orders.html">My Orders</a>
+              <a href="shop.html">Shop</a>
+              <button type="button" id="logoutBtn">Sign out</button>
             </div>
-            <a href="account.html">My Profile</a>
-            <a href="orders.html">My Orders</a>
-            <a href="shop.html">Shop</a>
-            <button type="button" id="logoutBtn">Sign out</button>
           </div>
+          <a href="login.html" class="top-nav-login" id="authNavLink">Login</a>
         </div>
-        <a href="login.html" class="top-nav-login" id="authNavLink">Login</a>
       </div>
     </div>
-  </div>
 
-  <div class="top-nav-search-wrap">
-    <input
-      type="search"
-      id="navSearch"
-      class="nav-search"
-      placeholder="Search models, brands, castings..."
-      autocomplete="off"
-    />
-    <div id="searchSuggestions" class="search-suggestions"></div>
-  </div>
-</header>
-
-<!-- ================= HERO ================= -->
-
-<section class="hero">
-
-  <video
-    class="hero-video"
-    autoplay
-    muted
-    playsinline
-    poster="./assets/images/login-bg.jpg"
-  >
-    <source  src="./assets/videos/intro.mp4" type="video/mp4">
-  </video>
-
-  <div class="hero-overlay"></div>
-
-  <div class="hero-content">
-    <h1>Curated Excellence for Every Collector.</h1>
-
-    <p>
-      From rare finds to mainline classics, discover the world of premium die-cast.
-    </p>
-
-    <a href="shop.html" class="btn solid btn-ripple">
-      Shop Latest Arrivals
-    </a>
-  </div>
-
-</section>
-
-<!-- ================= TRUST BAR ================= -->
-
-<section class="trust-bar">
-  <div class="trust-item">🚚 Insured Shipping</div>
-  <div class="trust-item">✔ Guaranteed Mint Condition</div>
-  <div class="trust-item">🧪 Collector-Owned</div>
-</section>
-
-<!-- ================= COLLECTION CATEGORIES ================= -->
-
-<section class="collections">
-
-  <h2>Shop by Collection</h2>
-  <p class="section-lead">Curated diecast lines — tap a category to browse the garage.</p>
-
-  <div class="collections-grid">
-    <a href="shop.html?category=jdm-legends" class="collection-tile cat-jdm">
-      <span class="collection-icon">🚗</span>
-      <span class="collection-name">JDM Legends</span>
-    </a>
-    <a href="shop.html?category=motorsport" class="collection-tile cat-motorsport">
-      <span class="collection-icon">🏁</span>
-      <span class="collection-name">Motorsport Collection</span>
-    </a>
-    <a href="shop.html?category=hypercars" class="collection-tile cat-hyper">
-      <span class="collection-icon">⚡</span>
-      <span class="collection-name">Hypercars</span>
-    </a>
-    <a href="shop.html?category=muscle-cars" class="collection-tile cat-muscle">
-      <span class="collection-icon">🔥</span>
-      <span class="collection-name">Muscle Cars</span>
-    </a>
-    <a href="shop.html?category=suvs" class="collection-tile cat-suv">
-      <span class="collection-icon">🛻</span>
-      <span class="collection-name">SUVs</span>
-    </a>
-  </div>
-
-</section>
-
-<!-- ================= SCALE GARAGE ================= -->
-
-<section class="garage">
-
-  <h2>Shop by Scale</h2>
-
-  <div class="garage-grid">
-    <a href="shop.html?scale=1:64" class="garage-tile scale-1-64">1:64</a>
-    <a href="shop.html?scale=1:43" class="garage-tile scale-1-43">1:43</a>
-    <a href="shop.html?scale=1:18" class="garage-tile scale-1-18">1:18</a>
-  </div>
-
-</section>
-
-<!-- ================= FEATURED SLIDERS ================= -->
-
-<section class="pedestal pedestal-alt" data-pedestal>
-  <div class="pedestal-top">
-    <h2>New Arrivals</h2>
-    <div class="pedestal-controls">
-      <button type="button" class="pedestal-arrow" data-scroll="left" aria-label="Scroll left">‹</button>
-      <button type="button" class="pedestal-arrow" data-scroll="right" aria-label="Scroll right">›</button>
+    <div class="top-nav-search-wrap">
+      <input type="search" id="navSearch" class="nav-search" placeholder="Search models, brands, castings..."
+        autocomplete="off" />
+      <div id="searchSuggestions" class="search-suggestions"></div>
     </div>
-  </div>
-  <div class="pedestal-scroll-area">
-    <div class="pedestal-row" id="newArrivalsRow"></div>
-  </div>
-</section>
+  </header>
 
-<section class="pedestal" data-pedestal>
-  <div class="pedestal-top">
-    <h2>Limited Editions</h2>
-    <div class="pedestal-controls">
-      <button type="button" class="pedestal-arrow" data-scroll="left" aria-label="Scroll left">‹</button>
-      <button type="button" class="pedestal-arrow" data-scroll="right" aria-label="Scroll right">›</button>
+  <!-- ================= HERO ================= -->
+
+  <section class="hero">
+
+    <video class="hero-video" autoplay muted playsinline poster="./assets/images/login-bg.jpg">
+      <source src="./assets/videos/intro.mp4" type="video/mp4">
+    </video>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <h1>Curated Excellence for Every Collector.</h1>
+
+      <p>
+        From rare finds to mainline classics, discover the world of premium die-cast.
+      </p>
+
+      <a href="shop.html" class="btn solid btn-ripple">
+        Shop Latest Arrivals
+      </a>
     </div>
-  </div>
-  <div class="pedestal-scroll-area">
-    <div class="pedestal-row" id="limitedEditionsRow"></div>
-  </div>
-</section>
 
-<!-- ================= THE LAB JOURNAL ================= -->
+  </section>
 
-<section class="lab">
+  <!-- ================= TRUST BAR ================= -->
 
-  <h2>Inside The Lab</h2>
+  <section class="trust-bar">
+    <div class="trust-item">🚚 Insured Shipping</div>
+    <div class="trust-item">✔ Guaranteed Mint Condition</div>
+    <div class="trust-item">🧪 Collector-Owned</div>
+  </section>
 
-  <div class="lab-grid">
+  <!-- ================= COLLECTION CATEGORIES ================= -->
 
-    <article class="lab-card">
-      <h3>How to Spot a Treasure Hunt</h3>
-      <p>Key signs every collector should know before buying.</p>
-    </article>
+  <section class="collections">
 
-    <article class="lab-card">
-      <h3>Top 5 Releases This Month</h3>
-      <p>Our handpicked highlights from current drops.</p>
-    </article>
+    <h2>Shop by Collection</h2>
+    <p class="section-lead">Curated diecast lines — tap a category to browse the garage.</p>
 
-    <article class="lab-card">
-      <h3>Protective Grading 101</h3>
-      <p>Keeping your collection mint for years.</p>
-    </article>
+    <div class="collections-grid">
+      <a href="shop.html?category=jdm-legends" class="collection-tile cat-jdm">
+        <span class="collection-icon">🚗</span>
+        <span class="collection-name">JDM Legends</span>
+      </a>
+      <a href="shop.html?category=motorsport" class="collection-tile cat-motorsport">
+        <span class="collection-icon">🏁</span>
+        <span class="collection-name">Motorsport Collection</span>
+      </a>
+      <a href="shop.html?category=hypercars" class="collection-tile cat-hyper">
+        <span class="collection-icon">⚡</span>
+        <span class="collection-name">Hypercars</span>
+      </a>
+      <a href="shop.html?category=muscle-cars" class="collection-tile cat-muscle">
+        <span class="collection-icon">🔥</span>
+        <span class="collection-name">Muscle Cars</span>
+      </a>
+      <a href="shop.html?category=suvs" class="collection-tile cat-suv">
+        <span class="collection-icon">🛻</span>
+        <span class="collection-name">SUVs</span>
+      </a>
+    </div>
 
-  </div>
+  </section>
 
-</section>
+  <!-- ================= SCALE GARAGE ================= -->
 
-<!-- ================= CTA ================= -->
+  <section class="garage">
 
-<section class="home-cta">
-  <h2>Join the Lab</h2>
-  <p>Be the first to access new drops, pre-orders, and collector insights.</p>
+    <h2>Shop by Scale</h2>
 
-  <form class="newsletter">
-    <input type="email" placeholder="Enter your email">
-    <button type="button" class="btn solid btn-ripple">Subscribe</button>
-  </form>
-</section>
+    <div class="garage-grid">
+      <a href="shop.html?scale=1:64" class="garage-tile scale-1-64">1:64</a>
+      <a href="shop.html?scale=1:32" class="garage-tile scale-1-43">1:32</a>
+      <a href="shop.html?scale=1:18" class="garage-tile scale-1-18">1:18</a>
+    </div>
 
-<!-- ================= FOOTER ================= -->
+  </section>
 
-<footer class="footer">
-  <p>© 2026 CASTLAB. All Rights Reserved.</p>
-</footer>
+  <!-- ================= FEATURED SLIDERS ================= -->
+
+  <section class="pedestal pedestal-alt" data-pedestal>
+    <div class="pedestal-top">
+      <h2>New Arrivals</h2>
+      <div class="pedestal-controls">
+        <button type="button" class="pedestal-arrow" data-scroll="left" aria-label="Scroll left">‹</button>
+        <button type="button" class="pedestal-arrow" data-scroll="right" aria-label="Scroll right">›</button>
+      </div>
+    </div>
+    <div class="pedestal-scroll-area">
+      <div class="pedestal-row" id="newArrivalsRow"></div>
+    </div>
+  </section>
+
+  <section class="pedestal" data-pedestal>
+    <div class="pedestal-top">
+      <h2>Limited Editions</h2>
+      <div class="pedestal-controls">
+        <button type="button" class="pedestal-arrow" data-scroll="left" aria-label="Scroll left">‹</button>
+        <button type="button" class="pedestal-arrow" data-scroll="right" aria-label="Scroll right">›</button>
+      </div>
+    </div>
+    <div class="pedestal-scroll-area">
+      <div class="pedestal-row" id="limitedEditionsRow"></div>
+    </div>
+  </section>
+
+  <!-- ================= THE LAB JOURNAL ================= -->
+
+  <section class="lab">
+
+    <h2>Inside The Lab</h2>
+
+    <div class="lab-grid">
+
+      <article class="lab-card">
+        <h3>How to Spot a Treasure Hunt</h3>
+        <p>Key signs every collector should know before buying.</p>
+      </article>
+
+      <article class="lab-card">
+        <h3>Top 5 Releases This Month</h3>
+        <p>Our handpicked highlights from current drops.</p>
+      </article>
+
+      <article class="lab-card">
+        <h3>Protective Grading 101</h3>
+        <p>Keeping your collection mint for years.</p>
+      </article>
+
+    </div>
+
+  </section>
+
+  <!-- ================= CTA ================= -->
+
+  <section class="home-cta">
+    <h2>Join the Lab</h2>
+    <p>Be the first to access new drops, pre-orders, and collector insights.</p>
+
+    <form class="newsletter">
+      <input type="email" placeholder="Enter your email">
+      <button type="button" class="btn solid btn-ripple">Subscribe</button>
+    </form>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+
+  <footer class="footer">
+    <p>© 2026 CASTLAB. All Rights Reserved.</p>
+  </footer>
 
   <script src="js/config.js"></script>
   <script src="js/store.js"></script>
   <script src="js/home-search.js"></script>
   <script src="js/home.js"></script>
-<script src="js/animations.js"></script>
-<script src="js/navbar.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/navbar.js"></script>
 
 </body>
+
 </html>
