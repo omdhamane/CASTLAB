@@ -42,6 +42,14 @@
         <p style="opacity: 0.7;">Please wait while we confirm your email address.</p>
       </div>
 
+      <div id="checkEmailState" class="hidden">
+        <div class="status-icon" style="color: #60a5fa;">✉</div>
+        <h2>Check Your Email</h2>
+        <p style="opacity: 0.7; margin-bottom: 24px;">We've sent a verification link to your email address. Please click it to activate your account.</p>
+        <button id="resendBtnNoToken" class="btn outline" style="width: 100%;">Resend Email</button>
+        <a href="login.html" style="display: block; margin-top: 16px; opacity: 0.8;">Back to Login</a>
+      </div>
+
       <div id="successState" class="hidden">
         <div class="status-icon success">✓</div>
         <h2>Email Verified!</h2>
@@ -66,15 +74,41 @@
       const token = urlParams.get('token');
       
       const loadingState = document.getElementById("loadingState");
+      const checkEmailState = document.getElementById("checkEmailState");
       const successState = document.getElementById("successState");
       const errorState = document.getElementById("errorState");
       const errorMessage = document.getElementById("errorMessage");
-      const resendBtn = document.getElementById("resendBtn");
+      
+      const handleResend = async (btn) => {
+        const email = prompt("Please enter your email address to resend the link:");
+        if (!email) return;
+
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Sending...";
+
+        try {
+          const res = await fetch(`${API_URL}/auth/resend-verification`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+          });
+          const data = await res.json();
+          alert(data.message || "Verification email sent!");
+        } catch (error) {
+          alert("Failed to resend. Please try again.");
+        } finally {
+          btn.disabled = false;
+          btn.innerText = originalText;
+        }
+      };
+
+      document.getElementById("resendBtn").addEventListener("click", function() { handleResend(this); });
+      document.getElementById("resendBtnNoToken").addEventListener("click", function() { handleResend(this); });
 
       if (!token) {
         loadingState.classList.add("hidden");
-        errorState.classList.remove("hidden");
-        errorMessage.innerText = "No verification token provided.";
+        checkEmailState.classList.remove("hidden");
         return;
       }
 
