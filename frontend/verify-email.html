@@ -73,92 +73,70 @@
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
       
-      const loadingState = document.getElementById("loadingState");
+      const loadingState    = document.getElementById("loadingState");
       const checkEmailState = document.getElementById("checkEmailState");
-      const successState = document.getElementById("successState");
-      const errorState = document.getElementById("errorState");
-      const errorMessage = document.getElementById("errorMessage");
-      
+      const successState    = document.getElementById("successState");
+      const errorState      = document.getElementById("errorState");
+      const errorMessage    = document.getElementById("errorMessage");
+
+      // ── Shared resend helper ──────────────────────────────────────────
       const handleResend = async (btn) => {
-        const email = prompt("Please enter your email address to resend the link:");
+        const email = prompt("Enter your email address to resend the verification link:");
         if (!email) return;
 
-        const originalText = btn.innerText;
+        const original = btn.innerText;
         btn.disabled = true;
         btn.innerText = "Sending...";
 
         try {
-          const res = await fetch(`${API_URL}/auth/resend-verification`, {
+          const res = await fetch(`${API_BASE}/api/auth/resend-verification`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
           });
           const data = await res.json();
           alert(data.message || "Verification email sent!");
-        } catch (error) {
-          alert("Failed to resend. Please try again.");
+        } catch {
+          alert("Failed to resend. Please check your connection and try again.");
         } finally {
           btn.disabled = false;
-          btn.innerText = originalText;
+          btn.innerText = original;
         }
       };
 
       document.getElementById("resendBtn").addEventListener("click", function() { handleResend(this); });
       document.getElementById("resendBtnNoToken").addEventListener("click", function() { handleResend(this); });
 
+      // ── No token → show "check your email" state ─────────────────────
       if (!token) {
         loadingState.classList.add("hidden");
         checkEmailState.classList.remove("hidden");
         return;
       }
 
+      // ── Token present → call backend API ─────────────────────────────
       try {
-        const res = await fetch(`${API_URL}/auth/verifyemail/${token}`, {
-          method: "POST"
-        });
+        const res  = await fetch(`${API_BASE}/api/auth/verifyemail/${token}`, { method: "POST" });
         const data = await res.json();
-        
+
         loadingState.classList.add("hidden");
 
         if (res.ok) {
-          successState.classList.remove("hidden");
-          // Update local state if they were already logged in but unverified
+          // Persist the fresh token so user is logged-in after verification
           if (data.token) {
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
           }
+          successState.classList.remove("hidden");
         } else {
-          errorState.classList.remove("hidden");
           errorMessage.innerText = data.message || "The verification link is invalid or has expired.";
+          errorState.classList.remove("hidden");
         }
-      } catch (error) {
+      } catch {
         loadingState.classList.add("hidden");
+        errorMessage.innerText = "Network error. Please check your connection and try again.";
         errorState.classList.remove("hidden");
-        errorMessage.innerText = "Network error. Please try again.";
       }
-
-      resendBtn.addEventListener("click", async () => {
-        const email = prompt("Please enter your email address:");
-        if (!email) return;
-
-        resendBtn.disabled = true;
-        resendBtn.innerText = "Sending...";
-
-        try {
-          const res = await fetch(`${API_URL}/auth/resend-verification`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email })
-          });
-          const data = await res.json();
-          alert(data.message || "Verification email sent!");
-        } catch (error) {
-          alert("Failed to resend. Please try again.");
-        } finally {
-          resendBtn.disabled = false;
-          resendBtn.innerText = "Resend Verification Email";
-        }
-      });
     });
   </script>
 </body>
