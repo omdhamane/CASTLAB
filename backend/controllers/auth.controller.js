@@ -48,9 +48,13 @@ exports.registerUser = async (req, res) => {
       verificationToken: hashedVerificationToken
     });
 
-    // Send verification email
-    const frontendUrl = process.env.FRONTEND_URL || `${req.protocol}://${req.get("host")}`;
-    const verifyUrl = `${frontendUrl}/verify-email.html?token=${verificationTokenStr}`;
+    // Send verification email — MUST use FRONTEND_URL, never backend host
+    const FRONTEND = process.env.FRONTEND_URL;
+    if (!FRONTEND) {
+      console.error("❌ FRONTEND_URL env var is not set! Email links will be broken.");
+    }
+    const verifyUrl = `${FRONTEND}/verify-email.html?token=${verificationTokenStr}`;
+    console.log("[DEBUG] Verification URL:", verifyUrl);
     
     try {
       await sendEmail({
@@ -200,8 +204,13 @@ exports.forgotPassword = async (req, res) => {
     user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    const frontendUrl = process.env.FRONTEND_URL || `${req.protocol}://${req.get("host")}`;
-    const resetUrl = `${frontendUrl}/reset-password.html?token=${resetToken}`;
+    // Password reset link — MUST use FRONTEND_URL, never backend host
+    const FRONTEND = process.env.FRONTEND_URL;
+    if (!FRONTEND) {
+      console.error("❌ FRONTEND_URL env var is not set! Reset link will be broken.");
+    }
+    const resetUrl = `${FRONTEND}/reset-password.html?token=${resetToken}`;
+    console.log("[DEBUG] Password Reset URL:", resetUrl);
 
     try {
       await sendEmail({
@@ -350,7 +359,13 @@ exports.resendVerification = async (req, res) => {
     user.verificationToken = hashedVerificationToken;
     await user.save();
 
-    const verifyUrl = `${req.protocol}://${req.get("host")}/verify-email.html?token=${verificationTokenStr}`;
+    // Resend verification link — MUST use FRONTEND_URL, never backend host
+    const FRONTEND = process.env.FRONTEND_URL;
+    if (!FRONTEND) {
+      console.error("❌ FRONTEND_URL env var is not set! Email links will be broken.");
+    }
+    const verifyUrl = `${FRONTEND}/verify-email.html?token=${verificationTokenStr}`;
+    console.log("[DEBUG] Resend Verification URL:", verifyUrl);
     
     await sendEmail({
       email: user.email,
