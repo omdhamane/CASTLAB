@@ -1,40 +1,70 @@
 const nodemailer = require("nodemailer");
 
-// ─── Validate env vars on startup ──────────────────────────────────────────
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  console.error(
-    "❌  EMAIL_USER or EMAIL_PASS is not set. " +
-    "Transactional emails will fail. " +
-    "Set them in your .env / Render environment variables."
-  );
-}
+// ─── Env var audit (runs on module load) ─────────────────────────────────────
+console.log("━━━━━ SMTP CONFIG CHECK ━━━━━");
+console.log("EMAIL_USER  :", process.env.EMAIL_USER  || "❌ NOT SET");
+console.log("EMAIL_PASS  :", process.env.EMAIL_PASS  ? `✅ Loaded (${process.env.EMAIL_PASS.length} chars)` : "❌ NOT SET");
+console.log("FRONTEND_URL:", process.env.FRONTEND_URL || "❌ NOT SET");
+console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-// ─── Gmail SMTP transporter ─────────────────────────────────────────────────
+// ─── Gmail SMTP transporter ───────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,   // 16-char App Password, NOT Gmail login password
+    pass: process.env.EMAIL_PASS,  // Must be a 16-char App Password, NOT Gmail login password
   },
 });
 
+// ─── Verify SMTP connection on startup ───────────────────────────────────────
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("━━━━━ SMTP VERIFY FAILED ━━━━━");
+    console.error("Code   :", error.code);
+    console.error("Message:", error.message);
+    console.error("Stack  :", error.stack);
+    console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+  } else {
+    console.log("✅ SMTP connection verified — Gmail SMTP ready to send");
+  }
+});
+
+
 /**
- * Core send helper.
- * All email functions in this file go through here.
- *
+ * Core send helper — all email functions route through here.
  * @param {string} to      - Recipient address
  * @param {string} subject - Email subject
  * @param {string} html    - HTML body
  */
 const sendMail = async (to, subject, html) => {
-  const info = await transporter.sendMail({
-    from: `"CASTLAB" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    html,
-  });
-  console.log(`✅  Email sent → ${to}  [${info.messageId}]`);
-  return info;
+  console.log(`[SMTP] Attempting to send → TO: ${to} | SUBJECT: ${subject}`);
+  console.log(`[SMTP] FROM: ${process.env.EMAIL_USER}`);
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"CASTLAB" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    });
+
+    console.log("━━━━━ EMAIL SENT SUCCESSFULLY ━━━━━");
+    console.log("messageId :", info.messageId);
+    console.log("accepted  :", info.accepted);
+    console.log("rejected  :", info.rejected);
+    console.log("response  :", info.response);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    return info;
+  } catch (err) {
+    console.error("━━━━━ EMAIL SEND FAILED ━━━━━");
+    console.error("TO      :", to);
+    console.error("Code    :", err.code);
+    console.error("Command :", err.command);
+    console.error("Message :", err.message);
+    console.error("Stack   :", err.stack);
+    console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    throw err; // re-throw so callers can handle it
+  }
 };
 
 // ──────────────────────────────────────────────────────────────────────────────

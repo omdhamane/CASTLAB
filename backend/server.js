@@ -39,6 +39,9 @@ app.use("/api/orders", require("./routes/order.routes"));
 app.use("/api/upload", require("./routes/upload.routes"));
 app.use("/api/reviews", require("./routes/review.routes"));
 
+// ⚠️  DEBUG ONLY — remove after SMTP is confirmed working
+app.use("/api/debug", require("./routes/debug.routes"));
+
 // 404 Handler
 app.use((req, res) => {
   res.status(404).json({ message: `Route ${req.originalUrl} not found` });
