@@ -38,14 +38,52 @@ async function checkAdminStatus() {
       adminPanel.classList.remove("hidden");
       loadAdminProducts();
     } else {
-      alert("Unauthorized. Admin access required.");
-      window.location.href = "index.html";
+      // User is logged in but not an admin -> show the unlock gate to let them upgrade
+      adminGate.classList.remove("hidden");
+      adminPanel.classList.add("hidden");
     }
   } catch (err) {
     window.location.href = "login.html";
   }
 }
 
+async function unlockAdmin() {
+  const keyInput = document.getElementById("adminKeyInput");
+  const key = keyInput.value.trim();
+  if (!key) return alert("Enter admin key");
+
+  const unlockBtn = document.getElementById("adminUnlock");
+  const originalText = unlockBtn.textContent;
+  unlockBtn.disabled = true;
+  unlockBtn.textContent = "Verifying...";
+
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/verify-admin-key`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ adminKey: key })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      adminGate.classList.add("hidden");
+      adminPanel.classList.remove("hidden");
+      loadAdminProducts();
+    } else {
+      alert(data.message || "Failed to unlock admin panel");
+    }
+  } catch (err) {
+    alert("Network error occurred.");
+  } finally {
+    unlockBtn.disabled = false;
+    unlockBtn.textContent = originalText;
+  }
+}
+
+document.getElementById("adminUnlock")?.addEventListener("click", unlockAdmin);
 document.addEventListener("DOMContentLoaded", checkAdminStatus);
 
 // ==========================================

@@ -386,4 +386,40 @@ exports.resendVerification = async (req, res) => {
       message: "Server error. Please try again later."
     });
   }
+};
+
+// VERIFY ADMIN KEY AND UPGRADE ROLE
+exports.verifyAdminKey = async (req, res) => {
+  try {
+    const { adminKey } = req.body;
+    const expected = process.env.ADMIN_KEY || "castlab-admin";
+
+    if (!adminKey || adminKey !== expected) {
+      return res.status(401).json({ message: "Invalid admin key" });
+    }
+
+    const user = req.user; // populated by protect middleware
+    user.role = "admin";
+    await user.save();
+
+    // Generate a fresh token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d"
+    });
+
+    res.json({
+      message: "Admin access granted. Account upgraded to admin.",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isVerified: user.isVerified
+      }
+    });
+  } catch (error) {
+    console.error("Verify admin key error:", error.message);
+    res.status(500).json({ message: "Server error during admin verification" });
+  }
 };
