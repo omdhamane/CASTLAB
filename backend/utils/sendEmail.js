@@ -2,36 +2,30 @@ const nodemailer = require("nodemailer");
 
 // ─── Env var audit (runs on module load) ─────────────────────────────────────
 console.log("━━━━━ SMTP CONFIG CHECK ━━━━━");
-console.log("EMAIL_USER  :", process.env.EMAIL_USER  || "❌ NOT SET");
-console.log("EMAIL_PASS  :", process.env.EMAIL_PASS  ? `✅ Loaded (${process.env.EMAIL_PASS.length} chars)` : "❌ NOT SET");
+console.log("BREVO_USER  :", process.env.BREVO_USER  || "❌ NOT SET");
+console.log("BREVO_PASS  :", process.env.BREVO_PASS  ? `✅ Loaded (${process.env.BREVO_PASS.length} chars)` : "❌ NOT SET");
 console.log("FRONTEND_URL:", process.env.FRONTEND_URL || "❌ NOT SET");
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-// ─── Gmail SMTP transporter ───────────────────────────────────────────────────
+// ─── Brevo SMTP transporter ───────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp-relay.brevo.com",
   port: 587,
-  secure: false, // true for 465, false for other ports
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.BREVO_USER,
+    pass: process.env.BREVO_PASS,
   },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  family: 4, // force IPv4
 });
 
 // ─── Verify SMTP connection on startup ───────────────────────────────────────
 transporter.verify((error, success) => {
   if (error) {
     console.error("━━━━━ SMTP VERIFY FAILED ━━━━━");
-    console.error("Code   :", error.code);
     console.error("Message:", error.message);
-    console.error("Stack  :", error.stack);
     console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   } else {
-    console.log("✅ SMTP connection verified — Gmail SMTP ready to send");
+    console.log("✅ Brevo SMTP connection verified — Brevo SMTP Ready");
   }
 });
 
@@ -44,11 +38,11 @@ transporter.verify((error, success) => {
  */
 const sendMail = async (to, subject, html) => {
   console.log(`[SMTP] Attempting to send → TO: ${to} | SUBJECT: ${subject}`);
-  console.log(`[SMTP] FROM: ${process.env.EMAIL_USER}`);
+  console.log(`[SMTP] FROM: ${process.env.BREVO_USER}`);
 
   try {
     const info = await transporter.sendMail({
-      from: `"CASTLAB" <${process.env.EMAIL_USER}>`,
+      from: `"CASTLAB" <${process.env.BREVO_USER}>`,
       to,
       subject,
       html,

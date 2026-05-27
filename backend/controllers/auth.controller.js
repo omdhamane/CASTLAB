@@ -51,10 +51,13 @@ exports.registerUser = async (req, res) => {
     });
 
     // Send verification email — always uses FRONTEND_URL
-    const FRONTEND = process.env.FRONTEND_URL;
-    if (!FRONTEND) console.error("❌ FRONTEND_URL is not set!");
+    const FRONTEND = process.env.FRONTEND_URL || "https://castlab-gold.vercel.app";
     const verifyUrl = `${FRONTEND}/verify-email.html?token=${verificationTokenStr}`;
-    console.log("[DEBUG] Verification URL:", verifyUrl);
+    const localVerifyUrl = `http://localhost:5500/verify-email.html?token=${verificationTokenStr}`;
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("📧 [DEBUG] Verification URL (Production):", verifyUrl);
+    console.log("💻 [DEBUG] Verification URL (Local Dev) :", localVerifyUrl);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     try {
       await sendVerificationEmail(user.email, verifyUrl);
@@ -201,10 +204,13 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     // Password reset link — always uses FRONTEND_URL
-    const FRONTEND = process.env.FRONTEND_URL;
-    if (!FRONTEND) console.error("❌ FRONTEND_URL is not set!");
+    const FRONTEND = process.env.FRONTEND_URL || "https://castlab-gold.vercel.app";
     const resetUrl = `${FRONTEND}/reset-password.html?token=${resetToken}`;
-    console.log("[DEBUG] Password Reset URL:", resetUrl);
+    const localResetUrl = `http://localhost:5500/reset-password.html?token=${resetToken}`;
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("📧 [DEBUG] Password Reset URL (Production):", resetUrl);
+    console.log("💻 [DEBUG] Password Reset URL (Local Dev) :", localResetUrl);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     try {
       await sendPasswordResetEmail(user.email, resetUrl);
@@ -351,10 +357,13 @@ exports.resendVerification = async (req, res) => {
     await user.save();
 
     // Build frontend verification URL
-    const FRONTEND = process.env.FRONTEND_URL;
-    if (!FRONTEND) console.error("❌ FRONTEND_URL is not set!");
+    const FRONTEND = process.env.FRONTEND_URL || "https://castlab-gold.vercel.app";
     const verifyUrl = `${FRONTEND}/verify-email.html?token=${verificationTokenStr}`;
-    console.log("[DEBUG] Resend Verification URL:", verifyUrl);
+    const localVerifyUrl = `http://localhost:5500/verify-email.html?token=${verificationTokenStr}`;
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("📧 [DEBUG] Resend Verification URL (Production):", verifyUrl);
+    console.log("💻 [DEBUG] Resend Verification URL (Local Dev) :", localVerifyUrl);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     try {
       await sendVerificationEmail(user.email, verifyUrl);
