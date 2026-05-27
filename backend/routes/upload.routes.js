@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../middleware/upload.middleware");
-const cloudinary = require("../config/cloudinary");
+const { cloudinary, uploadToCloudinary } = require("../config/cloudinary");
 const { protect, authorizeRoles } = require("../middleware/auth.middleware");
 
 // POST /api/upload
@@ -12,11 +12,19 @@ router.post("/", protect, authorizeRoles("admin", "superadmin"), upload.array("i
       return res.status(400).json({ message: "No images provided" });
     }
 
-    // Since CloudinaryStorage is used, files are already uploaded to Cloudinary
-    const uploadedImages = req.files.map((file) => ({
-      url: file.path,          // The Cloudinary CDN secure URL
-      public_id: file.filename // The Cloudinary public ID (includes path)
-    }));
+    // Upload memory buffers to Cloudinary in parallel
+    const uploadPromises = req.files.map((file) => {
+      // Determine folder dynamically based on context
+      let folder = "castlab/products";
+      if (req.baseUrl.includes("users") || req.path.includes("avatar")) {
+        folder = "castlab/users";
+      } else if (req.baseUrl.includes("reviews") || req.path.includes("review")) {
+        folder = "castlab/reviews";
+      }
+      return uploadToCloudinary(file.buffer, folder);
+    });
+
+    const uploadedImages = await Promise.all(uploadPromises);
 
     res.status(200).json({
       message: "Images uploaded successfully",

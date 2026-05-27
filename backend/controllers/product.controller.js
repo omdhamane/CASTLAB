@@ -1,5 +1,5 @@
 const Product = require("../models/Product");
-const cloudinary = require("../config/cloudinary");
+const { cloudinary, uploadToCloudinary } = require("../config/cloudinary");
 
 const VALID_SCALES = ["1:64", "1:32", "1:18"];
 const VALID_CATEGORIES = Product.CATEGORIES || [
@@ -110,10 +110,8 @@ exports.createProduct = async (req, res) => {
     // Determine the product image from file upload or JSON body
     let productImage = { url: "", public_id: "" };
     if (req.file) {
-      productImage = {
-        url: req.file.path,
-        public_id: req.file.filename
-      };
+      // Stream buffer directly to Cloudinary
+      productImage = await uploadToCloudinary(req.file.buffer, "castlab/products");
     } else if (req.body.image) {
       productImage = typeof req.body.image === "string" 
         ? { url: req.body.image, public_id: "" }
@@ -245,11 +243,9 @@ exports.updateProduct = async (req, res) => {
           console.error("Cloudinary delete error:", err.message);
         }
       }
-      // 2. Set new main image
-      product.image = {
-        url: req.file.path,
-        public_id: req.file.filename
-      };
+      // 2. Upload and set new main image stream buffer
+      product.image = await uploadToCloudinary(req.file.buffer, "castlab/products");
+      
       // 3. Keep images array aligned
       product.images = [product.image];
 
