@@ -33,7 +33,17 @@ async function checkAdminStatus() {
       headers: getAuthHeaders()
     });
     const user = await res.json();
-    if (res.ok && (user.role === "admin" || user.role === "superadmin")) {
+    if (!res.ok) {
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+        return;
+      }
+      throw new Error(user.message || "Failed to fetch profile");
+    }
+    if (user.role === "admin" || user.role === "superadmin") {
       adminGate.classList.add("hidden");
       adminPanel.classList.remove("hidden");
       loadAdminProducts();
