@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../middleware/upload");
-const cloudinary = require("../utils/cloudinary");
+const upload = require("../middleware/upload.middleware");
+const cloudinary = require("../config/cloudinary");
 const { protect, authorizeRoles } = require("../middleware/auth.middleware");
 
 // POST /api/upload
@@ -12,26 +12,11 @@ router.post("/", protect, authorizeRoles("admin", "superadmin"), upload.array("i
       return res.status(400).json({ message: "No images provided" });
     }
 
-    const uploadPromises = req.files.map((file) => {
-      return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: "castlab_products",
-            transformation: [{ width: 1200, crop: "limit" }] // Optimization
-          },
-          (error, result) => {
-            if (error) return reject(error);
-            resolve({
-              url: result.secure_url,
-              public_id: result.public_id
-            });
-          }
-        );
-        uploadStream.end(file.buffer);
-      });
-    });
-
-    const uploadedImages = await Promise.all(uploadPromises);
+    // Since CloudinaryStorage is used, files are already uploaded to Cloudinary
+    const uploadedImages = req.files.map((file) => ({
+      url: file.path,          // The Cloudinary CDN secure URL
+      public_id: file.filename // The Cloudinary public ID (includes path)
+    }));
 
     res.status(200).json({
       message: "Images uploaded successfully",
@@ -40,7 +25,7 @@ router.post("/", protect, authorizeRoles("admin", "superadmin"), upload.array("i
 
   } catch (error) {
     console.error("Upload error:", error);
-    res.status(500).json({ message: "Server error during image upload" });
+    res.status(500).json({ message: "Server error during image upload", error: error.message });
   }
 });
 
@@ -50,18 +35,17 @@ router.delete("/:public_id", protect, authorizeRoles("admin", "superadmin"), asy
   try {
     const { public_id } = req.params;
     
-    // Cloudinary separates folders with '/', but URLs encode it. 
-    // We expect the frontend to send the decoded public_id
+    // Cloudinary expects the raw public_id (including folders)
     const result = await cloudinary.uploader.destroy(public_id);
     
-    if (result.result === "ok") {
-      res.status(200).json({ message: "Image deleted successfully" });
+    if (result.result === "ok" || result.result === "not found") {
+      res.status(200).json({ message: "Image deleted successfully", result });
     } else {
       res.status(400).json({ message: "Failed to delete image", result });
     }
   } catch (error) {
     console.error("Delete image error:", error);
-    res.status(500).json({ message: "Server error during image deletion" });
+    res.status(500).json({ message: "Server error during image deletion", error: error.message });
   }
 });
 

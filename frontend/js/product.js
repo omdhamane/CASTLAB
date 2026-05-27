@@ -42,11 +42,13 @@ async function loadProduct() {
 
     const product = await res.json();
 
-    // Handle multiple images (array of objects) or single legacy image
+    // Handle multiple images (array of objects), single object, or single legacy image
     const images =
-      product.images && product.images.length > 0
+      product.images && product.images.length > 0 && product.images[0].url
         ? product.images.map(img => img.url)
-        : product.image && product.image.trim() !== ""
+        : product.image && typeof product.image === "object" && product.image.url
+        ? [product.image.url]
+        : product.image && typeof product.image === "string" && product.image.trim() !== ""
         ? [product.image]
         : [FALLBACK_IMAGE];
 

@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const cloudinary = require("../config/cloudinary");
 
 const VALID_SCALES = ["1:64", "1:32", "1:18"];
 const VALID_CATEGORIES = Product.CATEGORIES || [
@@ -106,12 +107,35 @@ exports.createProduct = async (req, res) => {
       return res.status(400).json({ message: "Price must be greater than 0" });
     }
 
+    // Determine the product image from file upload or JSON body
+    let productImage = { url: "", public_id: "" };
+    if (req.file) {
+      productImage = {
+        url: req.file.path,
+        public_id: req.file.filename
+      };
+    } else if (req.body.image) {
+      productImage = typeof req.body.image === "string" 
+        ? { url: req.body.image, public_id: "" }
+        : req.body.image;
+    }
+
+    // Setup fallback images array
+    let productImages = [];
+    if (productImage.url) {
+      productImages.push(productImage);
+    }
+    if (images && Array.isArray(images)) {
+      productImages = [...productImages, ...images];
+    }
+
     const product = await Product.create({
       name,
       brand,
       scale,
       price,
-      images: images || [],
+      image: productImage,
+      images: productImages,
       stock: stock || 0,
       description: description || "",
       category: category || "",
@@ -183,8 +207,6 @@ exports.updateProduct = async (req, res) => {
       "brand",
       "scale",
       "price",
-      "image",
-      "images",
       "stock",
       "description",
       "category",
@@ -213,6 +235,44 @@ exports.updateProduct = async (req, res) => {
       return res.status(400).json({ message: "Invalid category" });
     }
 
+    // Handle direct image file upload replacement
+    if (req.file) {
+      // 1. Delete old main image if it exists in Cloudinary
+      if (product.image && product.image.public_id) {
+        try {
+          await cloudinary.uploader.destroy(product.image.public_id);
+        } catch (err) {
+          console.error("Cloudinary delete error:", err.message);
+        }
+      }
+      // 2. Set new main image
+      product.image = {
+        url: req.file.path,
+        public_id: req.file.filename
+      };
+      // 3. Keep images array aligned
+      product.images = [product.image];
+
+    } else if (req.body.image !== undefined) {
+      // Handle JSON body update for image
+      const newImage = typeof req.body.image === "string"
+        ? { url: req.body.image, public_id: "" }
+        : req.body.image;
+
+      if (newImage && newImage.url && product.image && product.image.public_id && product.image.public_id !== newImage.public_id) {
+        try {
+          await cloudinary.uploader.destroy(product.image.public_id);
+        } catch (err) {
+          console.error("Cloudinary delete error:", err.message);
+        }
+      }
+      product.image = newImage;
+    }
+
+    if (req.body.images !== undefined) {
+      product.images = req.body.images;
+    }
+
     await product.save();
 
     res.json({ message: "Product updated", product });
@@ -229,10 +289,34 @@ exports.deleteProduct = async (req, res) => {
       return res.status(400).json({ message: "Invalid product ID" });
     }
 
-    const product = await Product.findByIdAndDelete(id);
+    const product = await Product.findById(id);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+
+    // 1. Delete main image from Cloudinary
+    if (product.image && product.image.public_id) {
+      try {
+        await cloudinary.uploader.destroy(product.image.public_id);
+      } catch (err) {
+        console.error("Cloudinary delete error:", err.message);
+      }
+    }
+
+    // 2. Delete all supplementary images in the images array from Cloudinary
+    if (product.images && product.images.length > 0) {
+      for (const img of product.images) {
+        if (img.public_id && img.public_id !== product.image?.public_id) {
+          try {
+            await cloudinary.uploader.destroy(img.public_id);
+          } catch (err) {
+            console.error("Cloudinary delete error:", err.message);
+          }
+        }
+      }
+    }
+
+    await Product.findByIdAndDelete(id);
 
     res.json({ message: "Product deleted" });
   } catch (error) {

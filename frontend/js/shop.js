@@ -93,7 +93,11 @@ async function loadProducts({ scale = null, search = null, category = null } = {
     const id = product._id || product.id;
     const oos = isOutOfStock(product);
     const imageSrc =
-      product.image && product.image.trim() !== ""
+      product.image && typeof product.image === "object" && product.image.url
+        ? product.image.url
+        : product.images && product.images.length > 0 && product.images[0].url
+        ? product.images[0].url
+        : product.image && typeof product.image === "string" && product.image.trim() !== ""
         ? product.image
         : FALLBACK_IMAGE;
 
