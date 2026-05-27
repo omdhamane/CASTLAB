@@ -2,9 +2,9 @@ const https = require("https");
 
 // ─── Env var audit (runs on module load) ─────────────────────────────────────
 console.log("━━━━━ BREVO API CONFIG CHECK ━━━━━");
-console.log("BREVO_USER  :", process.env.BREVO_USER  || "❌ NOT SET");
-console.log("BREVO_PASS  :", process.env.BREVO_PASS  ? `✅ Loaded (${process.env.BREVO_PASS.length} chars)` : "❌ NOT SET");
-console.log("FRONTEND_URL:", process.env.FRONTEND_URL || "❌ NOT SET");
+console.log("BREVO_API_KEY:", process.env.BREVO_API_KEY ? `✅ Loaded (${process.env.BREVO_API_KEY.length} chars)` : "❌ NOT SET");
+console.log("BREVO_USER   :", process.env.BREVO_USER  || "dhamaneom10@gmail.com (Default Fallback)");
+console.log("FRONTEND_URL :", process.env.FRONTEND_URL || "❌ NOT SET");
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
 /**
@@ -56,11 +56,12 @@ const postRequest = (url, headers, body) => {
  * Core send helper — sends email via Brevo REST API (HTTPS, bypasses blocked SMTP ports)
  */
 const sendMail = async (to, subject, html) => {
+  const senderEmail = process.env.BREVO_USER || "dhamaneom10@gmail.com";
   console.log(`[Brevo API] Attempting to send → TO: ${to} | SUBJECT: ${subject}`);
-  console.log(`[Brevo API] FROM: ${process.env.BREVO_USER}`);
+  console.log(`[Brevo API] FROM: ${senderEmail}`);
 
-  if (!process.env.BREVO_PASS || !process.env.BREVO_USER) {
-    console.error("❌ Brevo API credentials missing from environment variables!");
+  if (!process.env.BREVO_API_KEY) {
+    console.error("❌ BREVO_API_KEY is missing from environment variables!");
     throw new Error("Brevo credentials not configured");
   }
 
@@ -69,13 +70,13 @@ const sendMail = async (to, subject, html) => {
       "https://api.brevo.com/v3/smtp/email",
       {
         "accept": "application/json",
-        "api-key": process.env.BREVO_PASS,
+        "api-key": process.env.BREVO_API_KEY,
         "content-type": "application/json"
       },
       {
         sender: {
           name: "CASTLAB",
-          email: process.env.BREVO_USER
+          email: senderEmail
         },
         to: [
           {
