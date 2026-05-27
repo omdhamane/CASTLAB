@@ -285,6 +285,24 @@ exports.verifyEmail = async (req, res) => {
       verificationToken: hashedToken
     });
 
+    const FRONTEND = process.env.FRONTEND_URL || "https://castlab-gold.vercel.app";
+
+    if (req.method === "GET") {
+      if (!user) {
+        return res.redirect(`${FRONTEND}/login.html?verified=false&reason=invalid`);
+      }
+      user.isVerified = true;
+      user.verificationToken = undefined;
+      await user.save();
+      
+      try {
+        await sendWelcomeEmail(user.email, user.name);
+      } catch (e) {
+        console.error("Failed to send welcome email:", e.message);
+      }
+      return res.redirect(`${FRONTEND}/login.html?verified=true`);
+    }
+
     if (!user) {
       return res.status(400).json({ message: "Invalid verification token" });
     }
@@ -317,6 +335,10 @@ exports.verifyEmail = async (req, res) => {
     });
   } catch (error) {
     console.error("Verify email error:", error.message);
+    if (req.method === "GET") {
+      const FRONTEND = process.env.FRONTEND_URL || "https://castlab-gold.vercel.app";
+      return res.redirect(`${FRONTEND}/login.html?verified=false&reason=server_error`);
+    }
     res.status(500).json({ message: "Server error during verification" });
   }
 };

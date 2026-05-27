@@ -35,6 +35,9 @@ router.put("/resetpassword/:resetToken", resetPassword);
 // POST /api/auth/verifyemail/:token
 router.post("/verifyemail/:token", verifyEmail);
 
+// GET /api/auth/verifyemail/:token (for direct browser clicks/redirects)
+router.get("/verifyemail/:token", verifyEmail);
+
 // POST /api/auth/resend-verification
 router.post("/resend-verification", resendVerification);
 
