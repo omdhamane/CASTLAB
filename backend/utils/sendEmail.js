@@ -1,80 +1,107 @@
-const nodemailer = require("nodemailer");
+const https = require("https");
 
 // ─── Env var audit (runs on module load) ─────────────────────────────────────
-console.log("━━━━━ SMTP CONFIG CHECK ━━━━━");
+console.log("━━━━━ BREVO API CONFIG CHECK ━━━━━");
 console.log("BREVO_USER  :", process.env.BREVO_USER  || "❌ NOT SET");
 console.log("BREVO_PASS  :", process.env.BREVO_PASS  ? `✅ Loaded (${process.env.BREVO_PASS.length} chars)` : "❌ NOT SET");
 console.log("FRONTEND_URL:", process.env.FRONTEND_URL || "❌ NOT SET");
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-// ─── Brevo SMTP transporter ───────────────────────────────────────────────────
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.BREVO_USER,
-    pass: process.env.BREVO_PASS,
-  },
-});
-
-// ─── Verify SMTP connection on startup ───────────────────────────────────────
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("━━━━━ SMTP VERIFY FAILED ━━━━━");
-    console.error("Message:", error.message);
-    console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  } else {
-    console.log("✅ Brevo SMTP connection verified — Brevo SMTP Ready");
-  }
-});
-
-
 /**
- * Core send helper — all email functions route through here.
- * @param {string} to      - Recipient address
- * @param {string} subject - Email subject
- * @param {string} html    - HTML body
+ * Core HTTPS post request helper to communicate with Brevo REST API
  */
-const sendMail = async (to, subject, html) => {
-  console.log(`[SMTP] Attempting to send → TO: ${to} | SUBJECT: ${subject}`);
-  console.log(`[SMTP] FROM: ${process.env.BREVO_USER}`);
+const postRequest = (url, headers, body) => {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const options = {
+      hostname: u.hostname,
+      path: u.pathname,
+      method: "POST",
+      headers: headers
+    };
 
-  try {
-    const info = await transporter.sendMail({
-      from: `"CASTLAB" <${process.env.BREVO_USER}>`,
-      to,
-      subject,
-      html,
+    const req = https.request(options, (res) => {
+      let data = "";
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
+      res.on("end", () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(parsed);
+          } else {
+            reject(new Error(parsed.message || `HTTP ${res.statusCode}`));
+          }
+        } catch (e) {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(data);
+          } else {
+            reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+          }
+        }
+      });
     });
 
+    req.on("error", (err) => {
+      reject(err);
+    });
+
+    req.write(JSON.stringify(body));
+    req.end();
+  });
+};
+
+/**
+ * Core send helper — sends email via Brevo REST API (HTTPS, bypasses blocked SMTP ports)
+ */
+const sendMail = async (to, subject, html) => {
+  console.log(`[Brevo API] Attempting to send → TO: ${to} | SUBJECT: ${subject}`);
+  console.log(`[Brevo API] FROM: ${process.env.BREVO_USER}`);
+
+  if (!process.env.BREVO_PASS || !process.env.BREVO_USER) {
+    console.error("❌ Brevo API credentials missing from environment variables!");
+    throw new Error("Brevo credentials not configured");
+  }
+
+  try {
+    const data = await postRequest(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        "accept": "application/json",
+        "api-key": process.env.BREVO_PASS,
+        "content-type": "application/json"
+      },
+      {
+        sender: {
+          name: "CASTLAB",
+          email: process.env.BREVO_USER
+        },
+        to: [
+          {
+            email: to
+          }
+        ],
+        subject: subject,
+        htmlContent: html
+      }
+    );
+
     console.log("━━━━━ EMAIL SENT SUCCESSFULLY ━━━━━");
-    console.log("messageId :", info.messageId);
-    console.log("accepted  :", info.accepted);
-    console.log("rejected  :", info.rejected);
-    console.log("response  :", info.response);
+    console.log("messageId :", data.messageId);
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    return info;
+    return data;
   } catch (err) {
     console.error("━━━━━ EMAIL SEND FAILED ━━━━━");
     console.error("TO      :", to);
-    console.error("Code    :", err.code);
-    console.error("Command :", err.command);
     console.error("Message :", err.message);
-    console.error("Stack   :", err.stack);
     console.error("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    throw err; // re-throw so callers can handle it
+    throw err;
   }
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Public helpers
-// ──────────────────────────────────────────────────────────────────────────────
-
 /**
  * Send account verification email.
- * @param {string} toEmail
- * @param {string} verifyUrl  - Full frontend URL with ?token=...
  */
 const sendVerificationEmail = (toEmail, verifyUrl) => {
   const html = `
@@ -108,8 +135,6 @@ const sendVerificationEmail = (toEmail, verifyUrl) => {
 
 /**
  * Send password reset email.
- * @param {string} toEmail
- * @param {string} resetUrl - Full frontend URL with ?token=...
  */
 const sendPasswordResetEmail = (toEmail, resetUrl) => {
   const html = `
@@ -143,8 +168,6 @@ const sendPasswordResetEmail = (toEmail, resetUrl) => {
 
 /**
  * Send welcome email after account verification.
- * @param {string} toEmail
- * @param {string} name
  */
 const sendWelcomeEmail = (toEmail, name) => {
   const html = `
