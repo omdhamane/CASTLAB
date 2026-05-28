@@ -394,7 +394,7 @@ body.page-home {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 220px;
+  min-width: 180px;
   padding: 0.5rem 0;
   background: #111;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -408,6 +408,7 @@ body.page-home {
   display: block;
   width: 100%;
   padding: 0.65rem 1rem;
+  margin-left: 0 !important;
   text-align: left;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.85);
@@ -415,6 +416,20 @@ body.page-home {
   border: none;
   font: inherit;
   cursor: pointer;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.user-menu-dropdown a.active::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 1rem;
+  right: 1rem;
+  width: auto;
+  height: 2px;
+  background: linear-gradient(90deg, #ff4d4d, #ff7a7a);
+  border-radius: 2px;
 }
 
 .user-menu-dropdown a:hover,
