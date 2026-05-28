@@ -173,7 +173,7 @@ async function loadAdminProducts() {
     products.forEach((p) => {
       const row = document.createElement("div");
       row.className = "admin-product-row";
-      const mainImg = p.images && p.images.length > 0 ? p.images[0].url : (p.image || "https://via.placeholder.com/80");
+      const mainImg = p.images && p.images.length > 0 ? p.images[0].url : ((p.image && typeof p.image === "object" ? p.image.url : p.image) || "https://via.placeholder.com/80");
       row.innerHTML = `
         <img src="${mainImg}" alt="" />
         <div class="admin-product-meta">
@@ -219,7 +219,8 @@ productList.addEventListener("click", async (e) => {
       p.images.forEach(img => addPreviewElement(img.url, img.public_id, null));
     } else if (p.image) {
       // Legacy support
-      addPreviewElement(p.image, null, null);
+      const imgUrl = typeof p.image === "object" ? p.image.url : p.image;
+      addPreviewElement(imgUrl, null, null);
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
