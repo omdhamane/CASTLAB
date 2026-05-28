@@ -63,6 +63,14 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    soldCount: {
+      type: Number,
+      default: 0
+    },
+    wishlistCount: {
+      type: Number,
+      default: 0
+    },
     rating: {
       type: Number,
       default: 0

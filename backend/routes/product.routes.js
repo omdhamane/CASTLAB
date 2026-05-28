@@ -9,12 +9,16 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
-  searchProducts
+  searchProducts,
+  getProductBrands,
+  toggleProductWishlistCount
 } = require("../controllers/product.controller");
 
+router.get("/brands", getProductBrands);
 router.get("/search", searchProducts);
 router.get("/", getProducts);
 router.get("/:id", getProductById);
+router.post("/:id/wishlist", toggleProductWishlistCount);
 
 router.post("/", protect, authorizeRoles("admin", "superadmin"), upload.single("image"), createProduct);
 router.put("/:id", protect, authorizeRoles("admin", "superadmin"), upload.single("image"), updateProduct);

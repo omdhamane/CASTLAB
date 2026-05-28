@@ -108,9 +108,10 @@ async function loadProduct() {
       </div>
     `;
 
-    /* ---------- THUMBNAILS ---------- */
+    /* ---------- THUMBNAILS & ZOOM ---------- */
     const thumbContainer = document.getElementById("thumbnails");
     const mainImage = document.getElementById("mainImage");
+    const mainImgContainer = document.querySelector(".main-image-container");
 
     if (images.length > 1) {
       images.forEach((img, index) => {
@@ -135,6 +136,32 @@ async function loadProduct() {
       });
     }
 
+    // 1. Desktop Hover Zoom (only if device supports hover)
+    if (mainImgContainer && mainImage && window.matchMedia("(hover: hover)").matches) {
+      mainImgContainer.addEventListener("mousemove", (e) => {
+        const rect = mainImgContainer.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        mainImage.style.transformOrigin = `${x}% ${y}%`;
+        mainImage.style.transform = "scale(2.2)";
+      });
+
+      mainImgContainer.addEventListener("mouseleave", () => {
+        mainImage.style.transform = "scale(1)";
+        mainImage.style.transformOrigin = "center center";
+      });
+    }
+
+    // 2. Mobile Fullscreen Modal Trigger on tap
+    if (mainImgContainer && mainImage) {
+      mainImgContainer.addEventListener("click", () => {
+        if (window.matchMedia("(hover: none)").matches || window.innerWidth <= 768) {
+          openFullscreenGallery(images, getActiveImageIndex(images, mainImage.src));
+        }
+      });
+    }
+
     /* ---------- ADD TO CART ---------- */
     const cartBtn = document.getElementById("addToCartBtn");
     if (cartBtn && !oos) {
@@ -154,24 +181,35 @@ async function loadProduct() {
     /* ---------- WISHLIST BUTTON ---------- */
     const wishlistBtn = document.getElementById("wishlistBtn");
     if (wishlistBtn) {
-     wishlistBtn.addEventListener("click", () => {
-  const wishlistProduct = {
-    id: product._id,
-    name: product.name,
-    price: product.price,
-    image: images[0]
-  };
+      wishlistBtn.addEventListener("click", () => {
+        const wishlistProduct = {
+          id: product._id,
+          name: product.name,
+          price: product.price,
+          image: images[0]
+        };
 
-  const added = toggleWishlist(wishlistProduct);
+        const added = toggleWishlist(wishlistProduct);
 
-  if (added) {
-    wishlistBtn.textContent = "♥ Wishlisted";
-    wishlistBtn.classList.add("active");
-  } else {
-    wishlistBtn.textContent = "Wishlist";
-    wishlistBtn.classList.remove("active");
-  }
-});
+        if (added) {
+          wishlistBtn.textContent = "♥ Wishlisted";
+          wishlistBtn.classList.add("active");
+        } else {
+          wishlistBtn.textContent = "Wishlist";
+          wishlistBtn.classList.remove("active");
+        }
+
+        // Call backend to update wishlistCount in DB (non-blocking)
+        try {
+          fetch(`${API_BASE}/api/products/${product._id}/wishlist`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: added ? "add" : "remove" })
+          });
+        } catch (err) {
+          console.error("Failed to sync wishlist count with server:", err.message);
+        }
+      });
     }
 
   } catch (error) {
@@ -379,4 +417,105 @@ function setupReviewForm() {
       submitBtn.innerText = "Submit Review";
     }
   });
+}
+
+/* ======================================================
+   MOBILE FULLSCREEN GALLERY & ZOOM
+   ====================================================== */
+
+function getActiveImageIndex(images, currentSrc) {
+  const idx = images.indexOf(currentSrc);
+  if (idx !== -1) return idx;
+  for (let i = 0; i < images.length; i++) {
+    if (currentSrc.endsWith(images[i]) || images[i].endsWith(currentSrc)) {
+      return i;
+    }
+  }
+  return 0;
+}
+
+function openFullscreenGallery(images, startIndex) {
+  let currentIndex = startIndex;
+
+  const modal = document.createElement("div");
+  modal.className = "gallery-modal";
+  modal.innerHTML = `
+    <span class="gallery-modal-close">&times;</span>
+    <button type="button" class="gallery-modal-arrow prev">&#10094;</button>
+    <div class="gallery-modal-content">
+      <img id="galleryModalImage" src="${images[currentIndex]}" alt="Gallery Image" />
+    </div>
+    <button type="button" class="gallery-modal-arrow next">&#10095;</button>
+    <div class="gallery-modal-counter">${currentIndex + 1} / ${images.length}</div>
+  `;
+  document.body.appendChild(modal);
+
+  // Prevent background scroll
+  document.body.style.overflow = "hidden";
+
+  setTimeout(() => modal.classList.add("open"), 10);
+
+  const modalImg = document.getElementById("galleryModalImage");
+  const counter = modal.querySelector(".gallery-modal-counter");
+
+  const updateImage = (index) => {
+    currentIndex = (index + images.length) % images.length;
+    if (modalImg) {
+      modalImg.style.opacity = "0";
+      setTimeout(() => {
+        modalImg.src = images[currentIndex];
+        modalImg.style.opacity = "1";
+        if (counter) counter.textContent = `${currentIndex + 1} / ${images.length}`;
+      }, 150);
+    }
+  };
+
+  const closeModal = () => {
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+    setTimeout(() => modal.remove(), 300);
+  };
+
+  modal.querySelector(".gallery-modal-close").addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal || e.target.classList.contains("gallery-modal-content")) {
+      closeModal();
+    }
+  });
+
+  modal.querySelector(".gallery-modal-arrow.prev").addEventListener("click", (e) => {
+    e.stopPropagation();
+    updateImage(currentIndex - 1);
+  });
+  modal.querySelector(".gallery-modal-arrow.next").addEventListener("click", (e) => {
+    e.stopPropagation();
+    updateImage(currentIndex + 1);
+  });
+
+  // Tap-to-zoom toggle
+  let isZoomed = false;
+  modalImg?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    isZoomed = !isZoomed;
+    modalImg.style.transform = isZoomed ? "scale(2.2)" : "scale(1)";
+    modalImg.style.cursor = isZoomed ? "zoom-out" : "zoom-in";
+  });
+
+  // Swipe support for touch devices
+  let startX = 0;
+  modal.addEventListener("touchstart", (e) => {
+    startX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  modal.addEventListener("touchend", (e) => {
+    const endX = e.changedTouches[0].screenX;
+    const diff = endX - startX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        updateImage(currentIndex - 1);
+      } else {
+        updateImage(currentIndex + 1);
+      }
+    }
+  }, { passive: true });
 }

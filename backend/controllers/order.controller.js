@@ -74,10 +74,13 @@ exports.createOrder = async (req, res) => {
       contactNumber: contactNumber || ""
     });
 
-    // ✅ Update stock
+    // ✅ Update stock and sold count
     for (let item of populatedItems) {
       await Product.findByIdAndUpdate(item.product, {
-        $inc: { stock: -item.quantity }
+        $inc: { 
+          stock: -item.quantity,
+          soldCount: item.quantity
+        }
       });
     }
 

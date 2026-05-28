@@ -6,22 +6,40 @@ const FEATURED_SECTIONS = [
 ];
 
 async function fetchFeatured(featured) {
-  const res = await fetch(
-    `${API_BASE}/api/products?featured=${encodeURIComponent(featured)}`
-  );
-  if (!res.ok) return [];
+  try {
+    const url = `${API_BASE}/api/products?featured=${encodeURIComponent(featured)}`;
+    console.log(`[Home] Fetching featured products from: ${url}`);
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.warn(`[Home] Failed to fetch featured: ${res.status} ${res.statusText}`);
+      return [];
+    }
 
-  const data = await res.json();
-  return Array.isArray(data) ? data : data.products || [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : data.products || [];
+  } catch (err) {
+    console.error(`[Home] Error fetching featured products (${featured}):`, err);
+    return [];
+  }
 }
 
 async function fetchRecent(limit = 8) {
-  const res = await fetch(`${API_BASE}/api/products`);
-  if (!res.ok) return [];
+  try {
+    const url = `${API_BASE}/api/products`;
+    console.log(`[Home] Fetching recent fallback products from: ${url}`);
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.warn(`[Home] Failed to fetch recent: ${res.status} ${res.statusText}`);
+      return [];
+    }
 
-  const data = await res.json();
-  const list = Array.isArray(data) ? data : data.products || [];
-  return list.slice(0, limit);
+    const data = await res.json();
+    const list = Array.isArray(data) ? data : data.products || [];
+    return list.slice(0, limit);
+  } catch (err) {
+    console.error("[Home] Error fetching recent products:", err);
+    return [];
+  }
 }
 
 function renderPedestalCard(product) {
@@ -74,25 +92,31 @@ async function loadFeaturedRow({ id, featured, fallback }) {
   const section = row.closest("[data-pedestal]");
   row.innerHTML = `<p class="pedestal-loading">Loading…</p>`;
 
-  let products = await fetchFeatured(featured);
+  try {
+    let products = await fetchFeatured(featured);
 
-  if (products.length === 0 && fallback === "recent") {
-    products = await fetchRecent();
-  }
+    if (products.length === 0 && fallback === "recent") {
+      console.log(`[Home] No featured products for '${featured}'. Attempting fallback to recent products...`);
+      products = await fetchRecent();
+    }
 
-  row.innerHTML = "";
+    row.innerHTML = "";
 
-  if (products.length === 0) {
-    row.innerHTML = `<p class="pedestal-empty">Coming soon — tag products in admin.</p>`;
+    if (products.length === 0) {
+      row.innerHTML = `<p class="pedestal-empty">Coming soon — tag products in admin.</p>`;
+      if (section) initPedestalScroll(section);
+      return;
+    }
+
+    products.forEach((product) => {
+      row.appendChild(renderPedestalCard(product));
+    });
+
     if (section) initPedestalScroll(section);
-    return;
+  } catch (err) {
+    console.error(`[Home] Error rendering row '${id}':`, err);
+    row.innerHTML = `<p class="pedestal-error" style="color: #ff4d4d; opacity: 0.8; text-align: center; width: 100%; padding: 2rem;">Failed to load products. Check connection or try reloading.</p>`;
   }
-
-  products.forEach((product) => {
-    row.appendChild(renderPedestalCard(product));
-  });
-
-  if (section) initPedestalScroll(section);
 }
 
 function showToast(msg) {
@@ -108,6 +132,7 @@ function showToast(msg) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Load featured products sections
   FEATURED_SECTIONS.forEach(loadFeaturedRow);
 
   // Newsletter Subscription
@@ -126,7 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.textContent = "Subscribing...";
 
       try {
-        const res = await fetch(`${API_BASE}/api/auth/subscribe`, {
+        const url = `${API_BASE}/api/auth/subscribe`;
+        console.log(`[Home] Sending newsletter subscription request to: ${url}`);
+        const res = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -143,7 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast(data.message || "Already subscribed or invalid email.");
         }
       } catch (err) {
-        showToast("Network error. Please try again later.");
+        console.error("[Home] Newsletter subscription error:", err);
+        showToast("Network error. Please check your connection and try again.");
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalBtnText;

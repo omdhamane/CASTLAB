@@ -11,10 +11,10 @@ const VALID_CATEGORIES = Product.CATEGORIES || [
 ];
 const VALID_FEATURED = ["best-seller", "new-arrival", "limited"];
 
-// GET ALL PRODUCTS (scale, category, featured filters)
+// GET ALL PRODUCTS (scale, category, featured, brand, price filters & sorting)
 exports.getProducts = async (req, res) => {
   try {
-    const { scale, category, featured } = req.query;
+    const { scale, category, featured, brand, minPrice, maxPrice, sort } = req.query;
 
     let filter = {};
 
@@ -41,7 +41,51 @@ exports.getProducts = async (req, res) => {
       if (featured === "limited") filter.isLimitedEdition = true;
     }
 
-    const products = await Product.find(filter).sort({ createdAt: -1 });
+    const escapeRegex = (str) => str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+    // Filter by Brand (supports multi-select comma-separated format)
+    if (brand) {
+      const brandList = brand.split(",").map(b => b.trim()).filter(Boolean);
+      if (brandList.length > 0) {
+        filter.brand = { $in: brandList.map(b => new RegExp("^" + escapeRegex(b) + "$", "i")) };
+      }
+    }
+
+    // Filter by Price Range
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    // Determine Sort Options
+    let products;
+    if (sort === "popularity") {
+      // Weighted popularity: soldCount * 3 + wishlistCount * 2 + numReviews * 1
+      products = await Product.aggregate([
+        { $match: filter },
+        {
+          $addFields: {
+            popularityScore: {
+              $add: [
+                { $multiply: [ { $ifNull: ["$soldCount", 0] }, 3 ] },
+                { $multiply: [ { $ifNull: ["$wishlistCount", 0] }, 2 ] },
+                { $multiply: [ { $ifNull: ["$numReviews", 0] }, 1 ] }
+              ]
+            }
+          }
+        },
+        { $sort: { popularityScore: -1 } }
+      ]);
+    } else {
+      let sortOption = { createdAt: -1 }; // default: newest
+      if (sort === "price-asc") sortOption = { price: 1 };
+      if (sort === "price-desc") sortOption = { price: -1 };
+      if (sort === "newest") sortOption = { createdAt: -1 };
+      if (sort === "most-wishlisted") sortOption = { wishlistCount: -1 };
+
+      products = await Product.find(filter).sort(sortOption);
+    }
 
     res.json({
       count: products.length,
@@ -318,5 +362,65 @@ exports.deleteProduct = async (req, res) => {
   } catch (error) {
     console.error("Delete product error:", error.message);
     res.status(500).json({ message: "Failed to delete product" });
+  }
+};
+
+// GET UNIQUE BRANDS & COUNTS
+exports.getProductBrands = async (req, res) => {
+  try {
+    const { scale, category } = req.query;
+    let matchFilter = {};
+
+    if (scale && VALID_SCALES.includes(scale)) matchFilter.scale = scale;
+    if (category && VALID_CATEGORIES.includes(category)) matchFilter.category = category;
+
+    const brands = await Product.aggregate([
+      { $match: matchFilter },
+      { $group: { _id: "$brand", count: { $sum: 1 } } },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.json(brands.map(b => ({ brand: b._id, count: b.count })));
+  } catch (error) {
+    console.error("Get brands error:", error.message);
+    res.status(500).json({ message: "Failed to fetch brands" });
+  }
+};
+
+// TOGGLE WISHLIST COUNT (increment or decrement wishlist count)
+exports.toggleProductWishlistCount = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body; // "add" or "remove"
+
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
+
+    const incValue = action === "add" ? 1 : action === "remove" ? -1 : 0;
+    if (incValue === 0) {
+      return res.status(400).json({ message: "Action must be 'add' or 'remove'" });
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      id,
+      { $inc: { wishlistCount: incValue } },
+      { new: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Clamp wishlistCount to >= 0 just in case
+    if (product.wishlistCount < 0) {
+      product.wishlistCount = 0;
+      await product.save();
+    }
+
+    res.json({ message: "Wishlist count updated successfully", wishlistCount: product.wishlistCount });
+  } catch (error) {
+    console.error("Toggle wishlist count error:", error.message);
+    res.status(500).json({ message: "Failed to update wishlist count" });
   }
 };

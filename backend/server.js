@@ -38,6 +38,7 @@ app.use("/api/products", require("./routes/product.routes"));
 app.use("/api/orders", require("./routes/order.routes"));
 app.use("/api/upload", require("./routes/upload.routes"));
 app.use("/api/reviews", require("./routes/review.routes"));
+app.use("/api/analytics", require("./routes/analytics.routes"));
 
 // ⚠️  DEBUG ONLY — remove after SMTP is confirmed working
 app.use("/api/debug", require("./routes/debug.routes"));

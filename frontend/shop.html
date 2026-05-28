@@ -70,17 +70,91 @@
         <a href="shop.html?category=suvs">SUVs</a>
       </nav>
 
-      <!-- FILTERS -->
+      <!-- SCALE FILTERS -->
       <section class="filters">
         <button class="filter-btn active btn-ripple" data-scale="1:64" type="button">1:64</button>
         <button class="filter-btn btn-ripple" data-scale="1:32" type="button">1:32</button>
         <button class="filter-btn btn-ripple" data-scale="1:18" type="button">1:18</button>
       </section>
 
-      <!-- PRODUCTS -->
-      <section id="productGrid" class="product-grid">
-        <!-- Dynamic product cards from shop.js -->
-      </section>
+      <!-- MOBILE FILTER TOGGLE BUTTON -->
+      <div class="mobile-filter-bar">
+        <button type="button" id="mobileFilterToggle" class="btn solid mobile-filter-btn">
+          🔍 Filter & Sort
+        </button>
+      </div>
+
+      <!-- MAIN SHOPPING LAYOUT -->
+      <div class="shop-layout-wrap">
+        
+        <!-- SIDEBAR FILTERS (SLIDE-OUT ON MOBILE) -->
+        <aside class="shop-sidebar" id="shopSidebar">
+          <div class="sidebar-header">
+            <h3>Filters</h3>
+            <button type="button" class="sidebar-close" id="sidebarClose">&times;</button>
+          </div>
+          
+          <div class="filter-group">
+            <h4>Brand</h4>
+            <div id="brandFilters" class="brand-filters-list">
+              <p class="filter-loading">Loading brands...</p>
+            </div>
+          </div>
+          
+          <div class="filter-group">
+            <h4>Price Range</h4>
+            <div class="price-range-slider-container">
+              <div class="price-input-fields">
+                <div class="price-field">
+                  <span>Min</span>
+                  <input type="number" id="minPriceInput" placeholder="₹0" min="0" />
+                </div>
+                <div class="price-field">
+                  <span>Max</span>
+                  <input type="number" id="maxPriceInput" placeholder="₹10000" min="0" />
+                </div>
+              </div>
+              <button type="button" id="applyPriceFilter" class="btn outline btn-block">Apply Price</button>
+            </div>
+          </div>
+
+          <div class="sidebar-actions">
+            <button type="button" id="resetFiltersSidebar" class="btn outline btn-block">Reset All</button>
+          </div>
+        </aside>
+
+        <!-- MAIN PRODUCTS CONTENT -->
+        <div class="shop-main-content">
+          <!-- TOP ACTION BAR -->
+          <div class="shop-action-bar">
+            <div class="product-count" id="productCount">Showing 0 models</div>
+            <div class="sort-selector-wrap">
+              <label for="sortBy">Sort By:</label>
+              <select id="sortBy" class="sort-dropdown">
+                <option value="newest">Newest First</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="popularity">Popularity</option>
+                <option value="most-wishlisted">Most Wishlisted</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- PRODUCTS -->
+          <section id="productGrid" class="product-grid">
+            <!-- Dynamic product cards from shop.js -->
+          </section>
+
+          <!-- EMPTY STATE -->
+          <div id="shopEmptyState" class="shop-empty-state hidden">
+            <span class="empty-icon">🏎️</span>
+            <h3>No models found matching your criteria</h3>
+            <p>Try resetting the price, brand, or scale filters to explore the full garage.</p>
+            <button type="button" id="resetFiltersEmpty" class="btn solid">Reset All Filters</button>
+          </div>
+        </div>
+
+      </div>
 
     </main>
 

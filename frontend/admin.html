@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/pages.css" />
   <link rel="stylesheet" href="css/responsive.css" />
+  <!-- Chart.js for analytics dashboard -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -33,11 +35,16 @@
 
     <section id="adminPanel" class="admin-panel hidden">
       <div class="admin-panel-head">
-        <h1>Product Manager</h1>
+        <div class="admin-tabs">
+          <button type="button" class="tab-btn active" id="tabProductManager">Product Manager</button>
+          <button type="button" class="tab-btn" id="tabAnalyticsDashboard">Analytics Dashboard</button>
+        </div>
         <button type="button" id="adminLogout" class="btn outline">Lock</button>
       </div>
 
-      <form id="productForm" class="admin-form glass-card">
+      <!-- TAB 1: PRODUCT MANAGER SECTION -->
+      <div id="productManagerSection" class="tab-section">
+        <form id="productForm" class="admin-form glass-card">
         <h2 id="formTitle">Add Product</h2>
         <input type="hidden" id="editId" />
 
@@ -89,6 +96,131 @@
         <h2>All Products</h2>
         <div id="adminProductList" class="admin-product-list"></div>
       </section>
+      </div> <!-- End productManagerSection -->
+
+      <!-- TAB 2: ANALYTICS DASHBOARD SECTION -->
+      <div id="analyticsDashboardSection" class="tab-section hidden">
+        
+        <!-- METRICS GRID -->
+        <div class="analytics-metrics-grid">
+          
+          <div class="metric-card glass">
+            <span class="metric-icon">💰</span>
+            <div class="metric-info">
+              <h4>Total Revenue</h4>
+              <p id="metricRevenue">₹0</p>
+            </div>
+          </div>
+          
+          <div class="metric-card glass">
+            <span class="metric-icon">📦</span>
+            <div class="metric-info">
+              <h4>Total Orders</h4>
+              <p id="metricOrders">0</p>
+            </div>
+          </div>
+
+          <div class="metric-card glass">
+            <span class="metric-icon">🔥</span>
+            <div class="metric-info">
+              <h4>Best Seller</h4>
+              <p id="metricBestSeller" class="truncate">—</p>
+            </div>
+          </div>
+
+          <div class="metric-card glass">
+            <span class="metric-icon">💖</span>
+            <div class="metric-info">
+              <h4>Most Wishlisted</h4>
+              <p id="metricWishlisted" class="truncate">—</p>
+            </div>
+          </div>
+
+          <div class="metric-card glass">
+            <span class="metric-icon">📏</span>
+            <div class="metric-info">
+              <h4>Popular Scale</h4>
+              <p id="metricScale">—</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CHARTS GRID -->
+        <div class="analytics-charts-grid">
+          <div class="chart-card glass">
+            <h3>Monthly Revenue</h3>
+            <div class="chart-container">
+              <canvas id="monthlyRevenueChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card glass">
+            <h3>Popular Scales</h3>
+            <div class="chart-container">
+              <canvas id="scaleSalesChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-charts-grid full-width-chart">
+          <div class="chart-card glass">
+            <h3>Top Selling Brands</h3>
+            <div class="chart-container">
+              <canvas id="brandSalesChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT DATA GRID -->
+        <div class="analytics-tables-grid">
+          
+          <div class="table-card glass">
+            <h3>Recent Orders</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recentOrdersList">
+                  <tr>
+                    <td colspan="5" style="text-align:center; opacity:0.5;">Loading orders...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="table-card glass">
+            <h3>Top Customers</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Orders</th>
+                    <th>Total Spent</th>
+                  </tr>
+                </thead>
+                <tbody id="topCustomersList">
+                  <tr>
+                    <td colspan="4" style="text-align:center; opacity:0.5;">Loading customers...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div> <!-- End analyticsDashboardSection -->
+
     </section>
   </main>
 
