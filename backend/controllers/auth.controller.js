@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Subscriber = require("../models/Subscriber");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -6,7 +7,8 @@ const { validatePassword } = require("../utils/passwordValidation");
 const {
   sendVerificationEmail,
   sendPasswordResetEmail,
-  sendWelcomeEmail
+  sendWelcomeEmail,
+  sendNewsletterWelcomeEmail
 } = require("../utils/sendEmail");
 
 // REGISTER
@@ -443,5 +445,46 @@ exports.verifyAdminKey = async (req, res) => {
   } catch (error) {
     console.error("Verify admin key error:", error.message);
     res.status(500).json({ message: "Server error during admin verification" });
+  }
+};
+
+// SUBSCRIBE NEWSLETTER
+exports.subscribeNewsletter = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if already subscribed
+    const existing = await Subscriber.findOne({ email: normalizedEmail });
+    if (existing) {
+      return res.status(400).json({ message: "You are already subscribed to our newsletter!" });
+    }
+
+    // Save subscription
+    await Subscriber.create({ email: normalizedEmail });
+
+    // Send newsletter welcome email
+    try {
+      await sendNewsletterWelcomeEmail(normalizedEmail);
+    } catch (e) {
+      console.error("Failed to send newsletter welcome email:", e.message);
+    }
+
+    res.status(201).json({
+      message: "Successfully joined the lab! Check your inbox for a confirmation. 🧪"
+    });
+  } catch (error) {
+    console.error("Subscribe newsletter error:", error.message);
+    res.status(500).json({ message: "Failed to subscribe. Please try again later." });
   }
 };

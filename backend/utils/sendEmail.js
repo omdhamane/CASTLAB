@@ -199,4 +199,42 @@ const sendWelcomeEmail = (toEmail, name) => {
   return sendMail(toEmail, "Welcome to CASTLAB", html);
 };
 
-module.exports = { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail };
+/**
+ * Send newsletter welcome email.
+ */
+const sendNewsletterWelcomeEmail = (toEmail) => {
+  const html = `
+  <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{margin:0;padding:0;background:#050505;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#fff}
+    .wrap{max-width:600px;margin:0 auto;padding:40px 20px}
+    .logo{font-size:28px;font-weight:800;letter-spacing:4px;color:#fff;text-align:center;display:block;margin-bottom:40px;text-decoration:none}
+    .card{background:#111;border:1px solid #222;border-radius:12px;padding:40px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+    h1{font-size:24px;font-weight:600;margin:0 0 20px;text-align:center}
+    p{font-size:16px;line-height:1.6;color:#aaa;text-align:center;margin:0 0 24px}
+    .btn{display:inline-block;background:#fff;color:#000!important;font-weight:600;font-size:16px;text-decoration:none;padding:14px 32px;border-radius:8px}
+    .footer{margin-top:32px;text-align:center;font-size:12px;color:#555}
+  </style></head><body>
+  <div class="wrap">
+    <a href="https://castlab-gold.vercel.app" class="logo">CASTLAB</a>
+    <div class="card">
+      <h1>Welcome to The Lab! 🧪</h1>
+      <p>Thanks for subscribing to the CASTLAB newsletter. You're now on the list to get early access to new die-cast drops, pre-orders, and collector insights.</p>
+      <div style="text-align:center;margin:32px 0">
+        <a href="https://castlab-gold.vercel.app/shop.html" class="btn">Explore the Garage</a>
+      </div>
+      <p style="font-size:14px;margin:0;color:#555">You are receiving this because you signed up at castlab.com. You can unsubscribe at any time.</p>
+    </div>
+    <div class="footer"><p>&copy; ${new Date().getFullYear()} CASTLAB. All rights reserved.</p></div>
+  </div>
+  </body></html>`;
+
+  return sendMail(toEmail, "Welcome to the CASTLAB Newsletter", html);
+};
+
+module.exports = { 
+  sendVerificationEmail, 
+  sendPasswordResetEmail, 
+  sendWelcomeEmail,
+  sendNewsletterWelcomeEmail 
+};

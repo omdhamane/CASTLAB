@@ -11,7 +11,8 @@ const {
   resetPassword,
   verifyEmail,
   resendVerification,
-  verifyAdminKey
+  verifyAdminKey,
+  subscribeNewsletter
 } = require("../controllers/auth.controller");
 
 // POST /api/auth/register
@@ -43,5 +44,8 @@ router.post("/resend-verification", resendVerification);
 
 // POST /api/auth/verify-admin-key
 router.post("/verify-admin-key", protect, verifyAdminKey);
+
+// POST /api/auth/subscribe
+router.post("/subscribe", subscribeNewsletter);
 
 module.exports = router;

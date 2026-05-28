@@ -95,6 +95,59 @@ async function loadFeaturedRow({ id, featured, fallback }) {
   if (section) initPedestalScroll(section);
 }
 
+function showToast(msg) {
+  const toast = document.createElement("div");
+  toast.className = "cart-toast";
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add("show"), 10);
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   FEATURED_SECTIONS.forEach(loadFeaturedRow);
+
+  // Newsletter Subscription
+  const newsletterForm = document.getElementById("newsletterForm");
+  if (newsletterForm) {
+    newsletterForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById("newsletterEmail");
+      const submitBtn = document.getElementById("newsletterBtn");
+      const email = emailInput ? emailInput.value.trim() : "";
+
+      if (!email) return;
+
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Subscribing...";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/subscribe`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          showToast(data.message || "Successfully subscribed! 🧪");
+          if (emailInput) emailInput.value = "";
+        } else {
+          showToast(data.message || "Already subscribed or invalid email.");
+        }
+      } catch (err) {
+        showToast("Network error. Please try again later.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+      }
+    });
+  }
 });
