@@ -90,7 +90,7 @@ body {
   width: 72px;
   height: 2px;
   margin: 1.25rem auto 0;
-  background: linear-gradient(90deg, transparent, #ff4d4d, transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
   opacity: 0;
   animation: lineReveal 0.8s ease 1.1s forwards;
 }
@@ -99,7 +99,7 @@ body {
   font-size: clamp(3rem, 8vw, 6.5rem);
   font-weight: 800;
   letter-spacing: clamp(4px, 1.2vw, 10px);
-  text-shadow: 0 0 60px rgba(255, 77, 77, 0.25);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
 }
 
 .hero-tagline {
