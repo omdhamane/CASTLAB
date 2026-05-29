@@ -49,6 +49,9 @@ header a:hover {
 
 .logo-link {
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
 }
 
 /* CASTLAB LOGO (SINGLE SOURCE OF TRUTH) */
@@ -242,6 +245,23 @@ body.page-home {
   color: #ffffff;
   font-family: "Inter", "Poppins", system-ui, sans-serif;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+  filter: drop-shadow(0 2px 8px rgba(255, 77, 77, 0.4));
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logo-link:hover .logo-icon,
+.top-nav a.logo:hover .logo-icon {
+  transform: scale(1.15) rotate(8deg);
 }
 
 /* SEARCH BAR */
