@@ -33,7 +33,7 @@ header a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.2rem 3rem;
+  padding: 1.4rem 4rem;
 
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(18px);
@@ -51,14 +51,14 @@ header a:hover {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 14px;
 }
 
 /* CASTLAB LOGO (SINGLE SOURCE OF TRUTH) */
 .castlab-logo {
-  font-size: 1.7rem;
-  font-weight: 900;
-  letter-spacing: 3px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
   color: #ffffff;
   font-family: "Inter", "Poppins", system-ui, sans-serif;
 
@@ -239,24 +239,25 @@ body.page-home {
 /* LOGO (REUSES CASTLAB BRAND FEEL WITHOUT CONFLICT) */
 .top-nav .logo,
 .top-nav a.logo {
-  font-size: 1.6rem;
-  font-weight: 900;
-  letter-spacing: 3px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
   color: #ffffff;
   font-family: "Inter", "Poppins", system-ui, sans-serif;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 14px;
 }
 
 .logo-icon {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
   border-radius: 6px;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   image-rendering: -webkit-optimize-contrast; /* Preserve sharp rendering on retina displays */
+  image-rendering: crisp-edges;
 }
 
 .logo-link:hover .logo-icon,
